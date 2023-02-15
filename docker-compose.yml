@@ -1,0 +1,22 @@
+version: "3"
+services:
+    consent:
+        image: mshare/consent
+        build: ./services/consent
+        ports:
+            - 8081:8080
+    healthcare-provider:
+        image: mshare/healthcare-provider
+        build: ./services/healthcare-provider
+        ports:
+            - 8082:8080
+    medication-record:
+        image: mshare/medication-record
+        build: ./services/medication-record
+        ports:
+            - 8083:8080
+    standardization:
+        image: mshare/standardization
+        build: ./services/standardization
+        ports:
+            - 8084:8080
