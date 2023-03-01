@@ -7,6 +7,13 @@ services:
             - ./services/consent:/app
         ports:
             - 8081:8080
+        depends_on:
+            - "mongo"
+        environment: 
+            MONGO_USERNAME: root
+            MONGO_PASSWORD: example
+            MONGO_DB_NAME: consent
+            MONGO_PORT: 27017
     healthcare-provider:
         image: mshare/healthcare-provider
         build: ./services/healthcare-provider
@@ -14,6 +21,13 @@ services:
             - ./services/healthcare-provider:/app
         ports:
             - 8082:8080
+        depends_on:
+            - "mongo"
+        environment: 
+            MONGO_USERNAME: root
+            MONGO_PASSWORD: example
+            MONGO_DB_NAME: healthcare-provider
+            MONGO_PORT: 27017
     medication-record:
         image: mshare/medication-record
         build: ./services/medication-record
@@ -28,9 +42,18 @@ services:
             - ./services/standardization:/app
         ports:
             - 8084:8080
+        depends_on:
+            - "mongo"
+        environment: 
+            MONGO_USERNAME: root
+            MONGO_PASSWORD: example
+            MONGO_DB_NAME: standardization
+            MONGO_PORT: 27017
     mongo:
-        image: mongo
+        image: mongo:4.4
         restart: always
+        ports:
+            - '27017:27017'
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: example
