@@ -1,9 +1,17 @@
-package main
+package controllers
 
 import (
-	"net/http"
-	"github.com/labstack/echo/v4"
-	"github.com/amundlrohne/dcs-medication-sharing/services/medication-record/routes"
+    "echo-mongo-api/configs"
+    "echo-mongo-api/models"
+    "echo-mongo-api/responses"
+    "net/http"
+    "time"
+  
+    "github.com/go-playground/validator/v10"
+    "github.com/labstack/echo/v4"
+    "go.mongodb.org/mongo-driver/bson/primitive"
+    "go.mongodb.org/mongo-driver/mongo"
+    "golang.org/x/net/context"
 )
 
 func getMedication(c echo.Context) error {
@@ -23,20 +31,4 @@ func putMedication(c echo.Context) error {
 func deleteMedication(c echo.Context) error {
 	id:=c.Param("id");
 	return c.String(http.StatusOK, "DELETE medication-record/" + id);
-}
-
-
-
-func main() {
-	e := echo.New()
-
-	//e.GET("/medication-record/:id", getMedication)
-	// e.POST("/medication-record/", postMedication)
-	// e.PUT("/medication-record/:id", putMedication)
-	// e.DELETE("/medication-record/:id", deleteMedication)
-
-	routes.MedicationRoute(e)
-	
-	e.Logger.Fatal(e.Start(":8080"))
-	
 }
