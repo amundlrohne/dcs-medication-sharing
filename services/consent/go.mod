@@ -3,6 +3,7 @@ module github.com/amundlrohne/dcs-medication-sharing/services/consent
 go 1.17
 
 require (
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/labstack/echo/v4 v4.10.0 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
