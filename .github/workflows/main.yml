@@ -1,28 +1,34 @@
-name: 'build'
+name: "build"
 
 on:
-  push:
-    bracnhes: 
-      - main
-  pull_request:
+    push:
+        branches:
+            - main
+    pull_request:
 
-jobs: 
-  build:
-    strategy:
-      matrix:
-        service: [consent, healthcare-provider, standardization, medication-record]
-    name: 'Build'
-    runs-on: ubuntu-latest
-    steps: 
-      - name: 'Checkout Github Action'
-        uses: actions/checkout@v2
-      - name: 'Login to GHCR'
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: 'amundlrohne'
-          password: ${{ secrets.GHCR_SECRET }}
-      - name: 'Build Service Image'
-        run: |
-          docker build ./services/${{ strategy.service }} --tag ghcr.io/amundlrohne/dcs-medication-sharing/${{ strategy.service }}:latest
-        docker push ghcr.io/amundlrohne/dcs-medication-sharing/${{ strategy.service }}:latest 
+jobs:
+    build:
+        strategy:
+            matrix:
+                service:
+                    [
+                        consent,
+                        healthcare-provider,
+                        standardization,
+                        medication-record,
+                    ]
+        name: "Build"
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Checkout Github Action"
+              uses: actions/checkout@v2
+            - name: "Login to GHCR"
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: "amundlrohne"
+                  password: ${{ secrets.GHCR_SECRET }}
+            - name: "Build Service Image"
+              run: |
+                  docker build ./services/${{ strategy.service }} --tag ghcr.io/amundlrohne/dcs-medication-sharing/${{ strategy.service }}:latest
+                  docker push ghcr.io/amundlrohne/dcs-medication-sharing/${{ strategy.service }}:latest
