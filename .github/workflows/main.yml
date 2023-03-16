@@ -21,8 +21,8 @@ jobs:
         with:
           registry: ghcr.io
           username: 'amundlrohne'
-          password: ${{ secrets.GHCR_SECRET }}
+          password: ${{ secrets.GHCR_SECRET }}
       - name: 'Build Service Image'
         run: |
-          docker build ./services/${{ strategy.service }} --tag ghcr.io/amundlrohne/dcs-medication-sharing/${{ strategy.service }}:latest
+          docker build ./services/${{ strategy.service }} --tag ghcr.io/amundlrohne/dcs-medication-sharing/${{ strategy.service }}:latest
         docker push ghcr.io/amundlrohne/dcs-medication-sharing/${{ strategy.service }}:latest 
