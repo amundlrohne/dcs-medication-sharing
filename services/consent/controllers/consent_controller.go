@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/net/context"
 )
@@ -36,6 +37,7 @@ func CreateConsent(c echo.Context) error {
 		ToPublicKey:   consent.ToPublicKey,
 		FromPublicKey: consent.FromPublicKey,
 		ExpDate:       consent.ExpDate,
+		DateCreated:   consent.DateCreated,
 	}
 
 	result, err := consentCollection.InsertOne(ctx, newConsent)
@@ -44,4 +46,46 @@ func CreateConsent(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, responses.ConsentResponse{Status: http.StatusCreated, Message: "success", Data: &echo.Map{"data": result}})
+}
+
+func GetConsent(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	fromPublicKey := c.Param("from_public_key")
+	var consent models.Consent
+	defer cancel()
+
+	// objId, _ := primitive.ObjectIDFromHex(fromPublicKey)
+
+	err := consentCollection.FindOne(ctx, bson.M{"frompublickey": fromPublicKey}).Decode(&consent)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": consent}})
+}
+
+func GetAllConsents(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var consents []models.Consent
+	defer cancel()
+
+	results, err := consentCollection.Find(ctx, bson.M{})
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	//reading from the db in an optimal way
+	defer results.Close(ctx)
+	for results.Next(ctx) {
+		var singleConsent models.Consent
+		if err = results.Decode(&singleConsent); err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+		}
+
+		consents = append(consents, singleConsent)
+	}
+
+	return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": consents}})
 }
