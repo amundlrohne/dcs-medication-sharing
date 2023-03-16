@@ -1,34 +1,58 @@
 package controllers
 
 import (
-    "echo-mongo-api/configs"
-    "echo-mongo-api/models"
-    "echo-mongo-api/responses"
-    "net/http"
-    "time"
-  
-    "github.com/go-playground/validator/v10"
-    "github.com/labstack/echo/v4"
-    "go.mongodb.org/mongo-driver/bson/primitive"
-    "go.mongodb.org/mongo-driver/mongo"
-    "golang.org/x/net/context"
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/labstack/echo/v4"
 )
 
-func getMedication(c echo.Context) error {
-	id:=c.Param("id");
-	return c.String(http.StatusOK, "GET medication-record/" + id);
+//var medicationRecordCollection *mongo.Collection = configs.GetCollection(configs.DB, "medicationRecord")
+
+var dbDummy = [10]string{"Hello", "world", "How", "are", "you"}
+
+func GetMedication(c echo.Context) error {
+	idStr := c.Param("id")
+
+	//Convert id to int
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		fmt.Println("Error during conversion")
+
+	}
+
+	return c.String(http.StatusOK, "GET medication-record/"+idStr+" DUMMY DB DATA: "+dbDummy[id])
 }
 
-func postMedication(c echo.Context) error {
-	return c.String(http.StatusOK, "POST medication-record/");
+func PostMedication(c echo.Context) error {
+	return c.String(http.StatusOK, "POST medication-record/ testing...")
+
+	//Post to db testing
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	// defer cancel()
+
+	// newMR := models.MedicationRecord{
+	// 	Id:   primitive.NewObjectID(),
+	// 	Name: "MedicationNameTest",
+	// }
+	// result, err := medicationRecordCollection.InsertOne(ctx, newMR)
+
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	// }
+
+	// return c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: &echo.Map{"data": result}})
+
 }
 
-func putMedication(c echo.Context) error {
-	id:=c.Param("id");
-	return c.String(http.StatusOK, "PUT medication-record/" + id);
+func PutMedication(c echo.Context) error {
+	id := c.Param("id")
+	return c.String(http.StatusOK, "PUT medication-record/"+id)
 }
 
-func deleteMedication(c echo.Context) error {
-	id:=c.Param("id");
-	return c.String(http.StatusOK, "DELETE medication-record/" + id);
+func DeleteMedication(c echo.Context) error {
+	id := c.Param("id")
+	return c.String(http.StatusOK, "DELETE medication-record/"+id)
 }
