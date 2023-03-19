@@ -11,9 +11,12 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
 
+            - name: Clean-up Docker
+              run: docker-compose down
+
             - name: Start containers
               run: docker-compose -f "docker-compose.yml" up -d --build
-              
+
             - name: Install Postman CLI
               run: |
                   curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
@@ -22,4 +25,3 @@ jobs:
             - name: Run API tests
               run: |
                   postman collection run "12643913-f305514c-d9cf-4bc5-8187-08a37f93adc5"
-
