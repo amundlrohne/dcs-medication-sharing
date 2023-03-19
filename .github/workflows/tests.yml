@@ -10,8 +10,10 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
 
-            - name: Clean-up Docker
-              run: docker-compose down
+            - name: disable and stop mono-xsp4.service
+              run: |
+                  sudo systemctl stop mono-xsp4.service || true
+                  sudo systemctl disable mono-xsp4.service || true
 
             - name: Start containers
               run: docker-compose -f "docker-compose.yml" up -d --build
