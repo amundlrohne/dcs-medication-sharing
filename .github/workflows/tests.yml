@@ -15,7 +15,7 @@ jobs:
               run: docker-compose -f "docker-compose.yml" up -d --build
 
             - name: Test container
-              run: curl http://127.0.0.1:8380/medication-record/0
+              run: curl http://127.0.0.11:8380/medication-record/0
 
             - name: Install Postman CLI
               run: |
