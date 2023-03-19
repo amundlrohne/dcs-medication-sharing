@@ -13,7 +13,7 @@ COPY *.go ./
 
 #RUN go build -o /medication-record
 
-EXPOSE 8083
+EXPOSE 8380
 
 #CMD [ "/medication-record" ]
 CMD CompileDaemon --build="go build -o /medication-record" --command=/medication-record

@@ -13,7 +13,7 @@ COPY *.go ./
 
 #RUN go build -o /standardization
 
-EXPOSE 8084
+EXPOSE 8480
 
 #CMD [ "/standardization" ]
 CMD CompileDaemon --build="go build -o /standardization" --command=/standardization

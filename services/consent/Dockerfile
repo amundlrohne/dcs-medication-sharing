@@ -14,7 +14,7 @@ COPY *.go ./
 
 #RUN go build -o /consent
 
-EXPOSE 8081
+EXPOSE 8180
 
 #CMD ["/consent"]
 CMD CompileDaemon --build="go build -o /consent" --command=/consent
