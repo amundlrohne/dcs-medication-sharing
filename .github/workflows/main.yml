@@ -31,3 +31,4 @@ jobs:
               run: |
                   docker build --tag ghcr.io/amundlrohne/dcs-medication-sharing/${{ matrix.service }}:latest services/${{ matrix.service }} 
                   docker push ghcr.io/amundlrohne/dcs-medication-sharing/${{ matrix.service }}:latest
+
