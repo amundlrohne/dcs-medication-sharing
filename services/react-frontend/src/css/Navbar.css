@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway:wght@300&family=Roboto&display=swap');
+
+.navbar {
+    width: 100%;
+    height: 75px;
+    background-color: #5CDB95;
+    position: absolute;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.navbar p {
+    font-family: 'Pacifico', cursive;
+    color: #05386B;
+    font-weight: bold;
+    font-size: 30px;
+    margin-left: 20px;
+}

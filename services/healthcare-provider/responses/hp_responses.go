@@ -1,10 +1,8 @@
 package responses
 
-import (
-	"github.com/labstack/echo/v4"
-)
+import "github.com/labstack/echo/v4"
 
-type MedicationResponse struct {
+type ProviderResponse struct {
 	Status  int       `json:"status"`
 	Message string    `json:"message"`
 	Data    *echo.Map `json:"data"`

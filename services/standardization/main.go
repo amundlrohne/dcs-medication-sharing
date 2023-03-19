@@ -1,17 +1,15 @@
 package main
 
 import (
-	"github.com/amundlrohne/dcs-medication-sharing/services/standardization/configs"
-	"github.com/amundlrohne/dcs-medication-sharing/services/standardization/routes"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	e := echo.New()
-
-	configs.ConnectDB()
-
-	routes.MedicationRoute(e)
-
+	e.GET("/standardization/hello", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello World")
+	})
 	_ = e.Start(":8080")
 }
