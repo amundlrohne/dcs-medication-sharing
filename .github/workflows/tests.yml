@@ -4,16 +4,12 @@ on:
 
 jobs:
     test:
+        name: "Postman Tests"
         timeout-minutes: 10
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v3
-
-            - name: disable and stop mono-xsp4.service
-              run: |
-                  sudo systemctl stop mono-xsp4.service || true
-                  sudo systemctl disable mono-xsp4.service || true
 
             - name: Start containers
               run: docker-compose -f "docker-compose.yml" up -d --build
