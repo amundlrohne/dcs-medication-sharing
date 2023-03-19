@@ -15,7 +15,7 @@ jobs:
               run: docker-compose -f "docker-compose.yml" up -d --build && docker ps && sleep 5
 
             - name: Run Newman
-            - uses: matt-ball/newman-action@master
+              uses: matt-ball/newman-action@master
               with:
                   apiKey: ${{ secrets.POSTMAN_API_KEY }}
                   collection: 12643913-f305514c-d9cf-4bc5-8187-08a37f93adc5
