@@ -14,6 +14,9 @@ jobs:
             - name: Start containers
               run: docker-compose -f "docker-compose.yml" up -d --build
 
+            - name: Test container
+              run: curl http://127.0.0.1:8380/medication-record/0
+
             - name: Install Postman CLI
               run: |
                   curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
