@@ -6,6 +6,6 @@ import (
 )
 
 func MedicationRoute(e *echo.Echo) {
-	e.GET("/searchByDrugName/:drugName", controllers.SearchDrug)
+	e.GET("/standardization/:drugName", controllers.SearchDrug)
 	e.POST("/medication", controllers.CreateMedication)
 }

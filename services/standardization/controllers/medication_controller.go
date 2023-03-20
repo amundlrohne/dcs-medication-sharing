@@ -46,6 +46,7 @@ type Drug struct {
 }
 
 var Drugs []Drug
+var DrugNames []string
 
 // Custom functions
 
@@ -124,8 +125,7 @@ func SearchDrug(c echo.Context) error {
 	//var drugs []Drug = ReadDrugsFile()
 	//var s = CreateNamesList(drugs)
 
-	var s = CreateNamesList(Drugs)
-	var res = SearchByName(s, searchTerm)
+	var res = SearchByName(DrugNames, searchTerm)
 
 	jsonResponse := []byte{}
 	jsonResponse, _ = json.Marshal(res)
