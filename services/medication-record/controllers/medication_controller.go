@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,14 +14,15 @@ func GetMedication(c echo.Context) error {
 	idStr := c.Param("id")
 
 	//Convert id to int
-	id, err := strconv.Atoi(idStr)
+	// id, err := strconv.Atoi(idStr)
 
-	if err != nil {
-		fmt.Println("Error during conversion")
+	// if err != nil {
+	// 	fmt.Println("Error during conversion")
 
-	}
+	// }
 
-	return c.String(http.StatusOK, "GET medication-record/"+idStr+" DUMMY DB DATA: "+dbDummy[id])
+	return c.String(http.StatusOK, "GET medication-record/"+idStr)
+	//return c.String(http.StatusOK, "GET medication-record/"+idStr+" DUMMY DB DATA: "+dbDummy[id])
 }
 
 func PostMedication(c echo.Context) error {
