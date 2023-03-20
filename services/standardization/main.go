@@ -12,8 +12,9 @@ func main() {
 
 	configs.ConnectDB()
 
-	// Fetch drugs
+	// Fetch drugs and create drug name array
 	controllers.Drugs = controllers.ReadDrugsFile()
+	controllers.DrugNames = controllers.CreateNamesList(controllers.Drugs)
 
 	routes.MedicationRoute(e)
 
