@@ -89,3 +89,45 @@ func GetAllConsents(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": consents}})
 }
+
+func DeleteConsent(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	fromPublicKey := c.Param("from_public_key")
+	// var consent models.Consent
+	defer cancel()
+
+	fmt.Println(fromPublicKey)
+	result, err := consentCollection.DeleteOne(ctx, bson.M{"frompublickey": fromPublicKey})
+
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+    }
+
+    if result.DeletedCount < 1 {
+        return c.JSON(http.StatusNotFound, responses.ConsentResponse{Status: http.StatusNotFound, Message: "error", Data: &echo.Map{"data": "Consent not found!"}})
+    }
+
+    return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": "Consent successfully deleted!"}})
+}
+
+func TimeOut(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	expdate := (time.Now().Format("02-01-2023"))
+
+	defer cancel()
+
+	fmt.Println("Time Now:")
+	fmt.Println(expdate)
+	result, err := consentCollection.DeleteMany(ctx, bson.M{"expdate": expdate})
+
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+    }
+
+    if result.DeletedCount < 1 {
+        return c.JSON(http.StatusNotFound, responses.ConsentResponse{Status: http.StatusNotFound, Message: "error", Data: &echo.Map{"data": "Consent not found!"}})
+    }
+
+    return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": "Consent successfully deleted!"}})
+
+}
