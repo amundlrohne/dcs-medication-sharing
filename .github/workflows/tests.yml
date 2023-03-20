@@ -1,32 +1,20 @@
-name: GitHub Actions Demo
-run-name: Test demo
-on: [push]
+name: "test"
+on:
+    pull_request:
+
 jobs:
-    docker:
-        timeout-minutes: 10
-        runs-on: ubuntu-latest
-
-        steps:
-        - name: Checkout
-          uses: actions/checkout@v1
-
-        - name: Start containers
-          run: docker-compose -f "docker-compose.yml" up -d --build
-
-        #- name: Stop containers
-        #  if: always()
-        #  run: docker-compose -f "docker-compose.yml" down
-
-          
-    automated-api-tests:
+    test:
+        name: "Postman Tests"
         runs-on: ubuntu-latest
         steps:
-          - uses: actions/checkout@v3
-          - name: Install Postman CLI
-            run: |
-              curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-          - name: Login to Postman CLI
-            run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-          - name: Run API tests
-            run: |
-              postman collection run "12643913-f305514c-d9cf-4bc5-8187-08a37f93adc5"
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Start containers
+              run: docker-compose -f "docker-compose.yml" up -d --build && docker ps && sleep 10
+
+            - name: Run Newman
+              uses: matt-ball/newman-action@master
+              with:
+                  apiKey: ${{ secrets.POSTMAN_API_KEY }}
+                  collection: 12643913-f305514c-d9cf-4bc5-8187-08a37f93adc5

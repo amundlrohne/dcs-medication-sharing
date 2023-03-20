@@ -6,7 +6,7 @@ services:
         volumes:
             - ./services/consent:/app
         ports:
-            - 8081:8080
+            - 8180:8080
         depends_on:
             - "mongo"
         environment: 
@@ -21,7 +21,7 @@ services:
         volumes:
             - ./services/healthcare-provider:/app
         ports:
-            - 8082:8080
+            - 8280:8080
         depends_on:
             - "mongo"
         environment: 
@@ -36,14 +36,14 @@ services:
         volumes:
             - ./services/medication-record:/app
         ports:
-            - 8083:8080
+            - 8380:8080
     standardization:
         image: mshare/standardization
         build: ./services/standardization
         volumes:
             - ./services/standardization:/app
         ports:
-            - 8084:8080
+            - 8480:8080
         depends_on:
             - "mongo"
         environment: 
