@@ -48,6 +48,26 @@ resource "kubernetes_deployment" "consent" {
             container_port = 8180
           }
 
+          env {
+            name  = "MONGO_URL"
+            value = mongodbatlas_advanced_cluster.dcs-medication-sharing.connection_strings[0].standard_srv
+          }
+
+          env {
+            name  = "MONGO_USERNAME"
+            value = var.mongodb_atlas_username
+          }
+
+          env {
+            name  = "MONGO_PASSWORD"
+            value = var.mongodb_atlas_password
+          }
+
+          env {
+            name  = "MONGO_DB_NAME"
+            value = "consent"
+          }
+
           resources {
             limits = {
               cpu    = "0.5"
@@ -111,6 +131,25 @@ resource "kubernetes_deployment" "healthcare-provider" {
             container_port = 8380
           }
 
+          env {
+            name  = "MONGO_URL"
+            value = mongodbatlas_advanced_cluster.dcs-medication-sharing.connection_strings[0].standard_srv
+          }
+
+          env {
+            name  = "MONGO_USERNAME"
+            value = var.mongodb_atlas_username
+          }
+
+          env {
+            name  = "MONGO_PASSWORD"
+            value = var.mongodb_atlas_password
+          }
+
+          env {
+            name  = "MONGO_DB_NAME"
+            value = "healthcare-provider"
+          }
           resources {
             limits = {
               cpu    = "0.5"

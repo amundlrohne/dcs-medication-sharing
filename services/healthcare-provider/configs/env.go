@@ -1,20 +1,19 @@
 package configs
 
 import (
-	"fmt"
 	"os"
 )
 
 func EnvMongoURI() string {
+	return os.Getenv("MONGO_URL")
+}
 
-	username := os.Getenv("MONGO_USERNAME")
-	password := os.Getenv("MONGO_PASSWORD")
-	host := os.Getenv("MONGO_DB_HOST")
-	port := os.Getenv("MONGO_PORT")
+func EnvMongoUsername() string {
+	return os.Getenv("MONGO_USERNAME")
+}
 
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s", username, password, host, port)
-
-	return uri
+func EnvMongoPassword() string {
+	return os.Getenv("MONGO_PASSWORD")
 }
 
 func EnvMongoDBName() string {
