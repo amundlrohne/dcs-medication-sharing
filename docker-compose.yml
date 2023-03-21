@@ -36,7 +36,7 @@ services:
         volumes:
             - ./services/medication-record:/app
         ports:
-            - 8083:8080
+            - 8380:8080
         environment:
             FHIR_URL: fhir
     standardization:
