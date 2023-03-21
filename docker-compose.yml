@@ -5,11 +5,12 @@ services:
         build: ./services/consent
         volumes:
             - ./services/consent:/app
+        entrypoint: CompileDaemon --command=/consent
         ports:
             - 8180:8080
         depends_on:
             - "mongo"
-        environment: 
+        environment:
             MONGO_USERNAME: root
             MONGO_PASSWORD: example
             MONGO_DB_NAME: consent
@@ -20,11 +21,12 @@ services:
         build: ./services/healthcare-provider
         volumes:
             - ./services/healthcare-provider:/app
+        entrypoint: CompileDaemon --command=/healthcare-provider
         ports:
             - 8280:8080
         depends_on:
             - "mongo"
-        environment: 
+        environment:
             MONGO_USERNAME: root
             MONGO_PASSWORD: example
             MONGO_DB_NAME: healthcare-provider
@@ -35,6 +37,7 @@ services:
         build: ./services/medication-record
         volumes:
             - ./services/medication-record:/app
+        entrypoint: CompileDaemon --command=/medication-record
         ports:
             - 8380:8080
         environment:
@@ -44,11 +47,12 @@ services:
         build: ./services/standardization
         volumes:
             - ./services/standardization:/app
+        entrypoint: CompileDaemon --command=/standardization
         ports:
             - 8480:8080
         depends_on:
             - "mongo"
-        environment: 
+        environment:
             MONGO_USERNAME: root
             MONGO_PASSWORD: example
             MONGO_DB_NAME: standardization
@@ -58,7 +62,7 @@ services:
         image: mongo:4.4
         restart: always
         ports:
-            - '27017:27017'
+            - "27017:27017"
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: example
@@ -75,7 +79,6 @@ services:
         environment:
             - CHOKIDAR_USEPOLLING=true
         command: npm start
-
     fhir:
         image: "hapiproject/hapi:latest"
         ports:
