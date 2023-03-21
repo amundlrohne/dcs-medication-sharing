@@ -112,7 +112,7 @@ func DeleteConsent(c echo.Context) error {
 
 func TimeOut(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	expdate := (time.Now().Format("02-01-2023"))
+	expdate := (time.Now().Format("02-01-2006"))
 
 	defer cancel()
 
