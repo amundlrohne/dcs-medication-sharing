@@ -9,11 +9,10 @@ COPY go.sum ./
 RUN go install -mod=mod github.com/githubnemo/CompileDaemon
 RUN go mod download
 
-COPY *.go ./
+COPY . ./
 
-#RUN go build -o /standardization
+RUN go build -o /standardization
 
 EXPOSE 8480
 
-#CMD [ "/standardization" ]
-CMD CompileDaemon --build="go build -o /standardization" --command=/standardization
+ENTRYPOINT [ "/standardization" ]

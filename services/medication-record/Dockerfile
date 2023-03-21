@@ -9,11 +9,10 @@ COPY go.sum ./
 RUN go install -mod=mod github.com/githubnemo/CompileDaemon
 RUN go mod download
 
-COPY *.go ./
+COPY . ./
 
-#RUN go build -o /medication-record
+RUN go build -o /medication-record
 
 EXPOSE 8380
 
-#CMD [ "/medication-record" ]
-CMD CompileDaemon --build="go build -o /medication-record" --command=/medication-record
+ENTRYPOINT [ "/medication-record" ]
