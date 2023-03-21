@@ -13,7 +13,7 @@ func main() {
 	controllers.Drugs = controllers.ReadDrugsFile()
 	controllers.DrugNames = controllers.CreateNamesList(controllers.Drugs)
 
-	routes.MedicationRoute(e)
+	routes.StandardizationRoute(e)
 
 	_ = e.Start(":8080")
 }

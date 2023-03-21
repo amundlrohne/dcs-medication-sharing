@@ -7,7 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func MedicationRoute(e *echo.Echo) {
+func StandardizationRoute(e *echo.Echo) {
+	e.GET("/standardization/drugNames/all", controllers.AllDrugNames)
 	e.GET("/standardization/:drugName", controllers.SearchDrug)
 	e.GET("/", IsAlive)
 }
