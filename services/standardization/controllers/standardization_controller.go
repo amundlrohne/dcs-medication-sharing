@@ -36,8 +36,7 @@ type Drug struct {
 var Drugs []Drug
 var DrugNames []string
 
-// Custom functions
-
+// Parse json drug library into a js drug array
 func ReadDrugsFile() []Drug {
 	jsonDrugFile, err := os.Open("drugs.json")
 
@@ -55,6 +54,15 @@ func ReadDrugsFile() []Drug {
 
 }
 
+// Return all drugs as JSON
+func AllDrugNames(c echo.Context) error {
+
+	jsonResponse := []byte{}
+	jsonResponse, _ = json.Marshal(DrugNames)
+	return c.JSONBlob(http.StatusOK, jsonResponse)
+}
+
+// Create a js string array containing all drug names
 func CreateNamesList(drugs []Drug) []string {
 
 	drugNamesList := []string{}
@@ -66,22 +74,23 @@ func CreateNamesList(drugs []Drug) []string {
 
 }
 
+// Search based on the seatchTerm through all the drug names string array
+// and return a string array as a result
 func SearchByName(drugNames []string, searchTerm string) []string {
+	var searchTerm2 = strings.Title(searchTerm)
 	searchResults := []string{}
 	for i := 0; i < len(drugNames); i++ {
-		if strings.Contains(drugNames[i], searchTerm) {
+		if strings.Contains(drugNames[i], searchTerm) || (strings.Contains(drugNames[i], searchTerm2)) {
 			searchResults = append(searchResults, drugNames[i])
 		}
 	}
 	return searchResults
 }
 
+// Return a json based on the SearchByName function
 func SearchDrug(c echo.Context) error {
 
 	searchTerm := c.Param("drugName")
-
-	//var drugs []Drug = ReadDrugsFile()
-	//var s = CreateNamesList(drugs)
 
 	var res = SearchByName(DrugNames, searchTerm)
 
