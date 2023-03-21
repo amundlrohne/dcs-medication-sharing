@@ -11,7 +11,9 @@ import (
 )
 
 func ConnectDB() *mongo.Client {
-	client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoURI()))
+	credential := options.Credential{Username: EnvMongoUsername(), Password: EnvMongoPassword()}
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoURI()).SetAuth(credential))
 	if err != nil {
 		log.Fatal(err)
 	}
