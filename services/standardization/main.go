@@ -1,15 +1,22 @@
 package main
 
 import (
-	"net/http"
-
+	"github.com/amundlrohne/dcs-medication-sharing/services/standardization/configs"
+	"github.com/amundlrohne/dcs-medication-sharing/services/standardization/controllers"
+	"github.com/amundlrohne/dcs-medication-sharing/services/standardization/routes"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	e := echo.New()
-	e.GET("/standardization/hello", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello World")
-	})
+
+	configs.ConnectDB()
+
+	// Fetch drugs and create drug name array
+	controllers.Drugs = controllers.ReadDrugsFile()
+	controllers.DrugNames = controllers.CreateNamesList(controllers.Drugs)
+
+	routes.MedicationRoute(e)
+
 	_ = e.Start(":8080")
 }

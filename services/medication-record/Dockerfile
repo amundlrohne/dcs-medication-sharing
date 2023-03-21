@@ -1,4 +1,5 @@
 FROM golang:1.20-alpine
+LABEL org.opencontainers.image.source https://github.com/amundlrohne/dcs-medication-sharing
 
 WORKDIR /app 
 
@@ -12,7 +13,7 @@ COPY *.go ./
 
 #RUN go build -o /medication-record
 
-EXPOSE 8083
+EXPOSE 8380
 
 #CMD [ "/medication-record" ]
 CMD CompileDaemon --build="go build -o /medication-record" --command=/medication-record
