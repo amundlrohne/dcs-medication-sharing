@@ -11,3 +11,8 @@ type User struct {
 	Username string `json:"username,omitempty" validate:"required"`
 	Password string `json:"password,omitempty" validate:"required"`
 }
+
+type JWT struct {
+	Username string `json:"username,omitempty" validate:"required"`
+	Token    string `json:"token,omitempty" validate:"required"`
+}

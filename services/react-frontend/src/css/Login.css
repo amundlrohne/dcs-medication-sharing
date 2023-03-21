@@ -6,7 +6,7 @@
     background-color: #efefef;
     border-radius: 25px;
     margin: 0 auto;
-    margin-top: 100px;
+    margin-top: 150px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,6 +30,11 @@
     font-size: 16px;
     font-family: 'Raleway', sans-serif;
     font-weight: bold;
+}
+
+.login-input:focus {
+    outline-style: none;
+    border: 1.5px solid #5CDB95;
 }
 
 .login-button {
@@ -60,7 +65,12 @@
     margin-top: 15px;
 }
 
-@media only screen and (max-width: 1000px) {
+#login-error {
+    color: #e50914;
+    margin-top: 50px;
+}
+
+@media only screen and (max-width: 1100px) {
     .login-component {
         width: 50%;
     }
