@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+func FHIR_URI() string {
+	return os.Getenv("FHIR_URL")
+}
+
 func EnvMongoURI() string {
 	username := os.Getenv("MONGO_USERNAME")
 	password := os.Getenv("MONGO_PASSWORD")

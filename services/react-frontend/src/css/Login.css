@@ -1,5 +1,73 @@
-/* .login-component {
-    width: 100%;
-    height: 100%;
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway:wght@300&family=Roboto&display=swap');
+
+.login-component {
+    width: 30%;
+    height: 600px;
+    background-color: #efefef;
+    border-radius: 25px;
+    margin: 0 auto;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 0px 25px #010c17;
+}
+
+.login-component #title {
+    font-family: 'Raleway', sans-serif;
+    color: #5CDB95;
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.login-input {
+    width: 80%;
+    height: 50px;
+    border: none;
+    border-radius: 25px;
+    background-color: #e6e4e4;
+    text-indent: 1em;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: bold;
+}
+
+.login-button {
+    width: 80%;
+    height: 50px;
+    border: none;
+    border-radius: 25px;
     background-color: #5CDB95;
-} */
+    color: #05386B;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+    margin-top: 50px;
+
+    transition: .4s;
+}
+
+.login-button:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 20px #2b6c49;
+}
+
+.login-input#username {
+    margin-top: 25px;
+}
+
+.login-input#password {
+    margin-top: 15px;
+}
+
+@media only screen and (max-width: 1000px) {
+    .login-component {
+        width: 50%;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .login-component {
+        width: 80%;
+    }
+}

@@ -3,16 +3,17 @@
 .navbar {
     width: 100%;
     height: 75px;
-    background-color: #5CDB95;
+    background-color: #05386B;
     position: absolute;
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    top: 0;
 }
 
 .navbar p {
     font-family: 'Pacifico', cursive;
-    color: #05386B;
+    color: #5CDB95;
     font-weight: bold;
     font-size: 30px;
     margin-left: 20px;
