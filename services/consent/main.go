@@ -15,6 +15,19 @@ func main() {
 
 	configs.ConnectDB()
 	routes.ConsentRoute(e)
+	
+	runCronJobs(e.AcquireContext())
 
 	_ = e.Start(":8080")
 }
+
+func runCronJobs(c echo.Context) {
+	s := cron.New()
+    	s.AddFunc("@daily", func() {
+		e :=echo.New()
+		controllers.TimeOut(e.AcquireContext())
+    })
+
+	fmt.Println("Here")
+    	s.Start()
+   }
