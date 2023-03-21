@@ -20,3 +20,7 @@ func EnvMongoURI() string {
 func EnvMongoDBName() string {
 	return os.Getenv("MONGO_DB_NAME")
 }
+
+func JWTSecretKey() string {
+	return os.Getenv("JWT_SECRET")
+}

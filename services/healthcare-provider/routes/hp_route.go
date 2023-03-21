@@ -6,10 +6,10 @@ import (
 )
 
 func ProviderRoute(e *echo.Echo) {
-	e.POST("/createProvider", controllers.CreateProvider)
-	e.GET("/getProvider/:providerID", controllers.GetProvider)
-	e.GET("/getProviders", controllers.GetAllProviders)
-	e.POST("/verifyUser", controllers.VerifyUser)
-	e.GET("/getCurrentUser", controllers.ReadAuthCookie)
-	e.DELETE("/deleteAuthCookie", controllers.DeleteAuthCookie)
+	e.POST("/health-provider", controllers.CreateProvider)
+	e.GET("/health-provider/:providerID", controllers.GetProvider)
+	e.GET("/health-provider/all", controllers.GetAllProviders)
+	e.POST("/health-provider/verify", controllers.VerifyUser)
+	e.GET("/health-provider/current", controllers.ReadAuthCookie)
+	e.DELETE("/health-provider", controllers.DeleteAuthCookie)
 }
