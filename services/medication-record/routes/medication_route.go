@@ -8,9 +8,9 @@ import (
 func MedicationRoute(e *echo.Echo) {
 
 	//All routes related to medication comes here
-	e.GET("/medication-record/:id", controllers.GetMedication)
-	e.POST("/medication-record", controllers.PostMedication)
-	e.PUT("/medication-record/:id", controllers.PutMedication)
-	e.DELETE("/medication-record/:id", controllers.DeleteMedication)
+	e.POST("/medication-record", controllers.GetMedicationRecord)
+	e.GET("/medication-record", controllers.GetAllMedicationRecords)
+	e.POST("/medication-record/new", controllers.PostMedicationRecord)
+	e.DELETE("/medication-record", controllers.DeleteMedicationRecord)
 
 }
