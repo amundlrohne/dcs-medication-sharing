@@ -31,6 +31,7 @@ services:
             MONGO_USERNAME: root
             MONGO_PASSWORD: example
             MONGO_DB_NAME: healthcare-provider
+            JWT_SECRET: development
     medication-record:
         image: mshare/medication-record
         build: ./services/medication-record

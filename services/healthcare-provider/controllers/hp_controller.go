@@ -10,6 +10,7 @@ import (
 	"github.com/amundlrohne/dcs-medication-sharing/services/healthcare-provider/responses"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,7 +20,15 @@ import (
 )
 
 var providerCollection *mongo.Collection = configs.GetCollection(configs.DB, "providers")
+var jwtCollection *mongo.Collection = configs.GetCollection(configs.DB, "jwts")
 var validate = validator.New()
+
+var jwtKey = []byte(configs.JWTSecretKey())
+
+type Claims struct {
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
 
 func CreateProvider(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -116,37 +125,114 @@ func VerifyUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
-	writeAuthCookie(c, user)
-	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": provider}})
-}
+	// Set expiration time to 30 days
+	expirationTime := time.Now().Add(720 * time.Hour)
+	// Create the JWT claims, which includes the username and expiry time
+	claims := &Claims{
+		Username: user.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			// In JWT, the expiry time is expressed as unix milliseconds
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
+	}
 
-func writeAuthCookie(c echo.Context, u models.User) error {
-	cookie := new(http.Cookie)
-	cookie.Name = "username"
-	cookie.Value = u.Username
-	cookie.Expires = time.Now().Add(24 * time.Hour)
-	c.SetCookie(cookie)
-	return c.String(http.StatusOK, "write a cookie")
-}
-
-func ReadAuthCookie(c echo.Context) error {
-	cookie, err := c.Cookie("username")
+	// Declare the token with the algorithm used for signing, and the claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// Create the JWT string
+	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
-	fmt.Println(cookie.Name)
-	fmt.Println(cookie.Value)
+
+	newJWT := models.JWT{
+		Username: provider.Username,
+		Token:    tokenString,
+	}
+
+	result, err := jwtCollection.InsertOne(ctx, newJWT)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	writeAuthCookie(c, user, tokenString, expirationTime)
+	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": provider, "token_data": result}})
+}
+
+func writeAuthCookie(c echo.Context, u models.User, tokenString string, exp time.Time) error {
+
+	cookie := new(http.Cookie)
+	cookie.Name = "token"
+	cookie.Value = tokenString
+	cookie.Expires = exp
+	c.SetCookie(cookie)
+
+	fmt.Println(c.Path())
+	return nil
+}
+
+func ReadAuthCookie(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var jwtModel models.JWT
+	defer cancel()
+
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "no-cookie", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	tknStr := cookie.Value
+
+	mongo_err := jwtCollection.FindOne(ctx, bson.M{"token": tknStr}).Decode(&jwtModel)
+	if mongo_err != nil {
+		return c.JSON(http.StatusUnauthorized, responses.ProviderResponse{Status: http.StatusUnauthorized, Message: "unauthorized", Data: &echo.Map{"data": mongo_err.Error()}})
+	}
+
+	// Initialize a new instance of `Claims`
+	claims := &Claims{}
+
+	// Parse the JWT string and store the result in `claims`.
+	// Note that we are passing the key in this method as well. This method will return an error
+	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
+	// or if the signature does not match
+	tkn, err := jwt.ParseWithClaims(jwtModel.Token, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			return c.JSON(http.StatusUnauthorized, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "unauthorized", Data: &echo.Map{"data": err.Error()}})
+		}
+		return c.JSON(http.StatusBadRequest, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	}
+	if !tkn.Valid {
+		return c.JSON(http.StatusUnauthorized, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "unauthorized", Data: &echo.Map{"data": err.Error()}})
+	}
+
 	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": cookie.Value}})
 }
 
 func DeleteAuthCookie(c echo.Context) error {
-	cookie := new(http.Cookie)
-	cookie.Name = "username"
-	cookie.Value = ""
-	cookie.Expires = time.Now().Add(0)
-	cookie.MaxAge = -1
-	c.SetCookie(cookie)
-	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "Cookie Deleted...", Data: &echo.Map{"data": ""}})
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "no-cookie", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	result, err := jwtCollection.DeleteOne(ctx, bson.M{"token": cookie.Value})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, responses.ProviderResponse{Status: http.StatusBadRequest, Message: "Not deleted ...", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	http.SetCookie(c.Response().Writer, &http.Cookie{
+		Name:    "token",
+		MaxAge:  -1,
+		Expires: time.Now().Add(-100 * time.Hour), // Set expires for older versions of IE
+		Path:    "/health-provider/verify",
+	})
+
+	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "Cookie Deleted...", Data: &echo.Map{"data": result}})
 }
 
 func ComparePasswords(userPassword string, providedPassword string) (bool, string) {
@@ -155,7 +241,7 @@ func ComparePasswords(userPassword string, providedPassword string) (bool, strin
 	msg := ""
 
 	if err != nil {
-		msg = "login or passowrd is incorrect"
+		msg = "invalid"
 		check = false
 	}
 
