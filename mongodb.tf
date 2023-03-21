@@ -1,3 +1,7 @@
+variable "mongodb_atlas_project_id" {
+  description = "mongodb atlas project id"
+}
+
 variable "mongodb_atlas_username" {
   description = "mongodb atlas username"
 }
@@ -19,8 +23,14 @@ provider "mongodbatlas" {
   private_key = var.mongodbatlas_private_key
 }
 
+resource "mongodbatlas_project_ip_access_list" "all_access" {
+  project_id = var.mongodb_atlas_project_id
+  cidr_block = "0.0.0.0/0"
+  comment    = "Allow all"
+}
+
 resource "mongodbatlas_advanced_cluster" "dcs-medication-sharing" {
-  project_id   = "64199ea462a42d47918b8293"
+  project_id   = var.mongodb_atlas_project_id
   name         = "dcs-medication-sharing"
   cluster_type = "REPLICASET"
   replication_specs {

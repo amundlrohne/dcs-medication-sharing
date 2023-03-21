@@ -27,7 +27,7 @@ resource "kubernetes_deployment" "consent" {
   }
 
   spec {
-    replicas = 2
+    replicas = 1
     selector {
       match_labels = {
         App = "ConsentService"
@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "consent" {
           name  = "consent"
 
           port {
-            container_port = 8180
+            container_port = 8080
           }
 
           env {
@@ -94,7 +94,7 @@ resource "kubernetes_service" "consent" {
     }
     port {
       port        = 8180
-      target_port = 8180
+      target_port = 8080
     }
 
     type = "LoadBalancer"
@@ -110,7 +110,7 @@ resource "kubernetes_deployment" "healthcare-provider" {
   }
 
   spec {
-    replicas = 2
+    replicas = 1
     selector {
       match_labels = {
         App = "HealthcareProviderService"
@@ -128,7 +128,7 @@ resource "kubernetes_deployment" "healthcare-provider" {
           name  = "healthcare-provider"
 
           port {
-            container_port = 8380
+            container_port = 8080
           }
 
           env {
@@ -177,7 +177,7 @@ resource "kubernetes_service" "healthcare-provider" {
     }
     port {
       port        = 8280
-      target_port = 8280
+      target_port = 8080
     }
 
     type = "LoadBalancer"
@@ -193,7 +193,7 @@ resource "kubernetes_deployment" "medication-record" {
   }
 
   spec {
-    replicas = 2
+    replicas = 1
     selector {
       match_labels = {
         App = "MedicationRecordService"
@@ -211,7 +211,7 @@ resource "kubernetes_deployment" "medication-record" {
           name  = "medication-record"
 
           port {
-            container_port = 8380
+            container_port = 8080
           }
 
           resources {
@@ -223,6 +223,20 @@ resource "kubernetes_deployment" "medication-record" {
               cpu    = "250m"
               memory = "50Mi"
             }
+          }
+          liveness_probe {
+            http_get {
+              path = "/isalive"
+              port = 8080
+
+              #http_header {
+              #  name  = "X-Custom-Header"
+              #  value = "Awesome"
+              #}
+            }
+
+            initial_delay_seconds = 3
+            period_seconds        = 3
           }
         }
       }
@@ -241,7 +255,7 @@ resource "kubernetes_service" "medication-record" {
     }
     port {
       port        = 8380
-      target_port = 8380
+      target_port = 8080
     }
 
     type = "LoadBalancer"
@@ -257,7 +271,7 @@ resource "kubernetes_deployment" "standardization" {
   }
 
   spec {
-    replicas = 2
+    replicas = 1
     selector {
       match_labels = {
         App = "StandardizationService"
@@ -275,7 +289,7 @@ resource "kubernetes_deployment" "standardization" {
           name  = "standardization"
 
           port {
-            container_port = 8480
+            container_port = 8080
           }
 
           resources {
@@ -305,10 +319,81 @@ resource "kubernetes_service" "standardization" {
     }
     port {
       port        = 8480
-      target_port = 8480
+      target_port = 8080
     }
 
     type = "LoadBalancer"
   }
 }
 
+resource "kubernetes_ingress_v1" "dcs-medication-sharing-ingress" {
+  metadata {
+    name = "dcs-medication-sharing-ingress"
+  }
+
+  spec {
+    default_backend {
+      service {
+        name = kubernetes_deployment.standardization.metadata[0].name
+        port {
+          number = 8480
+        }
+      }
+    }
+
+
+    rule {
+      http {
+        path {
+          backend {
+            service {
+              name = kubernetes_deployment.consent.metadata[0].name
+              port {
+                number = 8180
+              }
+            }
+          }
+
+          path = "/consent/*"
+        }
+
+        path {
+          backend {
+            service {
+              name = kubernetes_deployment.healthcare-provider.metadata[0].name
+              port {
+                number = 8280
+              }
+            }
+          }
+
+          path = "/healthcare-provider/*"
+        }
+        path {
+          backend {
+            service {
+              name = kubernetes_deployment.medication-record.metadata[0].name
+              port {
+                number = 8380
+              }
+            }
+          }
+
+          path = "/medication-record/*"
+        }
+        path {
+          backend {
+            service {
+              name = kubernetes_deployment.standardization.metadata[0].name
+              port {
+                number = 8480
+              }
+            }
+          }
+
+          path = "/standardization/*"
+        }
+      }
+    }
+  }
+}
