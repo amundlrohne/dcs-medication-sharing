@@ -1,101 +1,118 @@
-import React from 'react'
+import React from "react";
 
-import '../css/Login.css'
+import "../css/Login.css";
+import { resolveURL } from "../util/resolveURL";
 
 class Login extends React.Component {
-
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
-            usernameValue: '',
-            passwordValue: '',
-            errorMessage: '',
-            showError: false
-        }
+            usernameValue: "",
+            passwordValue: "",
+            errorMessage: "",
+            showError: false,
+        };
     }
 
     render() {
-        const { errorMessage, showError } = this.state
+        const { errorMessage, showError } = this.state;
         return (
-            <div className='login-component'>
-                <p id='title'>Healthcare Provider</p>
-                <input className='login-input' id='username' placeholder='Username' onChange={e => this.updateUsernameValue(e)}></input>
-                <input className='login-input' id='password' placeholder='Password' onChange={e => this.updatePasswordValue(e)} type='password'></input>
+            <div className="login-component">
+                <p id="title">Healthcare Provider</p>
+                <input
+                    className="login-input"
+                    id="username"
+                    placeholder="Username"
+                    onChange={(e) => this.updateUsernameValue(e)}
+                ></input>
+                <input
+                    className="login-input"
+                    id="password"
+                    placeholder="Password"
+                    onChange={(e) => this.updatePasswordValue(e)}
+                    type="password"
+                ></input>
 
-                <button className='login-button' onClick={this.loginClick}>Login</button>
+                <button className="login-button" onClick={this.loginClick}>
+                    Login
+                </button>
 
-                { showError && (
-                    <p id='login-error'>{errorMessage}</p>
-                ) }
+                {showError && <p id="login-error">{errorMessage}</p>}
             </div>
-        )
+        );
     }
 
-    async componentDidMount () {
-        let cookieData = await getCookie()
-        console.log(cookieData)
+    async componentDidMount() {
+        let cookieData = await getCookie();
+        console.log(cookieData);
 
-        if (cookieData.message === 'success') {
-            window.location = '/inbox'
+        if (cookieData.message === "success") {
+            window.location = "/inbox";
         }
     }
 
     updateUsernameValue = (e) => {
-        const val = e.target.value
+        const val = e.target.value;
         this.setState({
-            usernameValue: val
-        })
-    }
+            usernameValue: val,
+        });
+    };
 
     updatePasswordValue = (e) => {
-        const val = e.target.value
+        const val = e.target.value;
         this.setState({
-            passwordValue: val
-        })
-    }
+            passwordValue: val,
+        });
+    };
 
     updateErrorMessage = (value, visibility) => {
         this.setState({
             errorMessage: value,
-            showError: visibility
-        })
+            showError: visibility,
+        });
 
-        setTimeout(() => { this.updateErrorMessage("", false) }, 3000)
-    }
+        setTimeout(() => {
+            this.updateErrorMessage("", false);
+        }, 3000);
+    };
 
     loginClick = async () => {
+        console.log(resolveURL("healthcare-provider"));
 
-        if (this.state.usernameValue.length > 0 && this.state.passwordValue.length > 0){
-            let url = "http://localhost:8280/health-provider/verify"
+        if (
+            this.state.usernameValue.length > 0 &&
+            this.state.passwordValue.length > 0
+        ) {
+            let url = `${resolveURL(
+                "healthcare-provider"
+            )}/healthcare-provider/verify`;
 
             try {
                 let user_data = {
                     username: this.state.usernameValue,
-                    password: this.state.passwordValue
+                    password: this.state.passwordValue,
+                };
+
+                let data = await postData(url, user_data);
+                console.log(data.message);
+
+                if (data.message === "invalid") {
+                    this.updateErrorMessage("Invalid login credentials!", true);
                 }
 
-                let data = await postData(url, user_data)
-                console.log(data.message)
+                console.log(data);
+                if (data.message === "success") {
+                    console.log("Logged in!");
 
-                if (data.message === 'invalid') {
-                    this.updateErrorMessage("Invalid login credentials!", true)
+                    let cookieData = await getCookie();
+                    console.log(cookieData);
                 }
-
-                console.log(data)
-                if (data.message === 'success') {
-                    console.log("Logged in!")
-
-                    let cookieData = await getCookie()
-                    console.log(cookieData)
-                }
-            } catch {
-
-            }
+            } catch {}
         } else {
-            this.updateErrorMessage("Please fill in all fields!", true)
+            this.updateErrorMessage("Please fill in all fields!", true);
         }
-    }
+    };
 }
 
 const postData = async (url, data) => {
@@ -104,34 +121,34 @@ const postData = async (url, data) => {
         mode: "cors",
         credentials: "include",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
-    })
+        body: JSON.stringify(data),
+    });
 
-    return response.json()
-}
+    return response.json();
+};
 
 const getCookie = async () => {
-    let url = "http://localhost:8280/health-provider/current"
+    let url = `${resolveURL("healthcare-provider")}/health-provider/current`;
     const response = await fetch(url, {
         method: "GET",
         mode: "cors",
-        credentials: "include"
-    })
+        credentials: "include",
+    });
 
-    return response.json()
-}
+    return response.json();
+};
 
 const deleteCookie = async () => {
-    let url = "http://localhost:8280/health-provider"
+    let url = `${resolveURL("healthcare-provider")}/health-provider`;
     const response = await fetch(url, {
         method: "DELETE",
         mode: "cors",
-        credentials: "include"
-    })
+        credentials: "include",
+    });
 
-    return response.json()
-}
+    return response.json();
+};
 
-export default Login
+export default Login;

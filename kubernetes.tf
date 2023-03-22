@@ -309,6 +309,73 @@ resource "kubernetes_service" "standardization" {
   }
 }
 
+resource "kubernetes_deployment" "react-frontend" {
+  metadata {
+    name = "react-frontend-service"
+    labels = {
+      App = "ReactFrontendService"
+    }
+  }
+
+  spec {
+    replicas = 1
+    selector {
+      match_labels = {
+        App = "ReactFrontendService"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          App = "ReactFrontendService"
+        }
+      }
+      spec {
+        container {
+          image = "ghcr.io/amundlrohne/dcs-medication-sharing/react-frontend:latest"
+          name  = "react-frontend"
+
+          port {
+            container_port = 3000
+          }
+          env {
+            name  = "REACT_APP_PRODUCTION"
+            value = true
+          }
+
+          resources {
+            limits = {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "50Mi"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "react-frontend" {
+  metadata {
+    name = "react-frontend-service"
+  }
+  spec {
+    selector = {
+      App = kubernetes_deployment.react-frontend.spec.0.template.0.metadata[0].labels.App
+    }
+    port {
+      port        = 8080
+      target_port = 3000
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
 resource "kubernetes_ingress_v1" "dcs-medication-sharing-ingress" {
   metadata {
     name = "dcs-medication-sharing-ingress"
@@ -317,9 +384,9 @@ resource "kubernetes_ingress_v1" "dcs-medication-sharing-ingress" {
   spec {
     default_backend {
       service {
-        name = kubernetes_deployment.standardization.metadata[0].name
+        name = kubernetes_deployment.react-frontend.metadata[0].name
         port {
-          number = 8480
+          number = 8080
         }
       }
     }
