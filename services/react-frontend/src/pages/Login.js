@@ -78,8 +78,6 @@ class Login extends React.Component {
     };
 
     loginClick = async () => {
-        console.log(resolveURL("healthcare-provider"));
-
         if (
             this.state.usernameValue.length > 0 &&
             this.state.passwordValue.length > 0
@@ -106,8 +104,7 @@ class Login extends React.Component {
                     console.log("Logged in!");
 
                     let cookieData = await getCookie();
-                    window.location.href = '/inbox'
-
+                    window.location.href = "/inbox";
                 }
             } catch {}
         } else {
@@ -131,7 +128,9 @@ const postData = async (url, data) => {
 };
 
 const getCookie = async () => {
-    let url = `${resolveURL("healthcare-provider")}/healthcare-provider/current`;
+    let url = `${resolveURL(
+        "healthcare-provider"
+    )}/healthcare-provider/current`;
     const response = await fetch(url, {
         method: "GET",
         mode: "cors",
@@ -142,7 +141,7 @@ const getCookie = async () => {
 };
 
 const deleteCookie = async () => {
-    let url = `${resolveURL("healthcare-provider")}/healthcare-provider`;
+    let url = `${resolveURL("healthcare-provider")}/healthcare-provider/`;
     const response = await fetch(url, {
         method: "DELETE",
         mode: "cors",

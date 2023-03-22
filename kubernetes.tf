@@ -8,6 +8,11 @@ data "google_container_cluster" "primary" {
   location = var.region
 }
 
+
+variable "jwt_secret" {
+  description = "jwt secret"
+}
+
 provider "kubernetes" {
   host = "https://${google_container_cluster.primary.endpoint}"
 
@@ -38,8 +43,10 @@ resource "kubernetes_deployment" "consent" {
       }
       spec {
         container {
-          image = "ghcr.io/amundlrohne/dcs-medication-sharing/consent:latest"
-          name  = "consent"
+          image             = "ghcr.io/amundlrohne/dcs-medication-sharing/consent:latest"
+          name              = "consent"
+          image_pull_policy = "Always"
+
 
           port {
             container_port = 8080
@@ -121,8 +128,10 @@ resource "kubernetes_deployment" "healthcare-provider" {
       }
       spec {
         container {
-          image = "ghcr.io/amundlrohne/dcs-medication-sharing/healthcare-provider:latest"
-          name  = "healthcare-provider"
+          image             = "ghcr.io/amundlrohne/dcs-medication-sharing/healthcare-provider:latest"
+          name              = "healthcare-provider"
+          image_pull_policy = "Always"
+
 
           port {
             container_port = 8080
@@ -146,6 +155,11 @@ resource "kubernetes_deployment" "healthcare-provider" {
           env {
             name  = "MONGO_DB_NAME"
             value = "healthcare-provider"
+          }
+
+          env {
+            name  = "JWT_SECRET"
+            value = var.jwt_secret
           }
           resources {
             limits = {
@@ -204,8 +218,9 @@ resource "kubernetes_deployment" "medication-record" {
       }
       spec {
         container {
-          image = "ghcr.io/amundlrohne/dcs-medication-sharing/medication-record:latest"
-          name  = "medication-record"
+          image             = "ghcr.io/amundlrohne/dcs-medication-sharing/medication-record:latest"
+          name              = "medication-record"
+          image_pull_policy = "Always"
 
           port {
             container_port = 8080
@@ -218,7 +233,7 @@ resource "kubernetes_deployment" "medication-record" {
 
           env {
             name  = "PRODUCTION"
-            value = true
+            value = "true"
           }
 
           resources {
@@ -278,8 +293,10 @@ resource "kubernetes_deployment" "standardization" {
       }
       spec {
         container {
-          image = "ghcr.io/amundlrohne/dcs-medication-sharing/standardization:latest"
-          name  = "standardization"
+          image             = "ghcr.io/amundlrohne/dcs-medication-sharing/standardization:latest"
+          name              = "standardization"
+          image_pull_policy = "Always"
+
 
           port {
             container_port = 8080
@@ -342,8 +359,10 @@ resource "kubernetes_deployment" "react-frontend" {
       }
       spec {
         container {
-          image = "ghcr.io/amundlrohne/dcs-medication-sharing/react-frontend:latest"
-          name  = "react-frontend"
+          image             = "ghcr.io/amundlrohne/dcs-medication-sharing/react-frontend:latest"
+          name              = "react-frontend"
+          image_pull_policy = "Always"
+
 
           port {
             container_port = 3000
