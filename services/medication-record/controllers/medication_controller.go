@@ -83,7 +83,7 @@ func fhirPost(query string, body []byte) (*http.Request, error) {
 	if prod == "true" {
 		url := "https://healthcare.googleapis.com/v1/projects/dcs-medication-sharing/locations/europe-west4/datasets/dcs-medication-sharing-dataset/fhirStores/dcs-medication-sharing-fhir-store/fhir/" + query
 
-		req, err := http.NewRequest("GET", url, bytes.NewBuffer(body))
+		req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
 		if err != nil {
 			return nil, err
 		}
@@ -101,6 +101,33 @@ func fhirPost(query string, body []byte) (*http.Request, error) {
 		url := "http://" + configs.FHIR_URI() + ":8080/fhir/" + query
 
 		return http.NewRequest("POST", url, bytes.NewBuffer(body))
+	}
+}
+
+func fhirDelete(query string) (*http.Request, error) {
+	prod := configs.EnvProduction()
+
+	if prod == "true" {
+		url := "https://healthcare.googleapis.com/v1/projects/dcs-medication-sharing/locations/europe-west4/datasets/dcs-medication-sharing-dataset/fhirStores/dcs-medication-sharing-fhir-store/fhir/" + query
+
+		req, err := http.NewRequest("DELETE", url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		token, err := generateBearerToken()
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Content-Type", "application/fhir+json; charset=UTF-8")
+		req.Header.Set("Authorization", "Bearer "+token)
+
+		return req, nil
+	} else {
+		url := "http://" + configs.FHIR_URI() + ":8080/fhir/" + query
+
+		return http.NewRequest("DELETE", url, nil)
 	}
 }
 
@@ -161,10 +188,7 @@ func GetAllMedicationBundles(c echo.Context) error {
 
 }
 
-func PostMedicaitonBundle(c echo.Context) error {
-
-	url := "http://" + configs.FHIR_URI() + ":8080/fhir/Bundle?_format=json&_pretty=true"
-
+func PostMedicationBundle(c echo.Context) error {
 	var medicationRecords models.MedicationRecords
 
 	if err := c.Bind(&medicationRecords); err != nil {
@@ -210,7 +234,7 @@ func PostMedicaitonBundle(c echo.Context) error {
 	jsonValue, _ := json.Marshal(bundle)
 
 	// Create a new HTTP request with the POST method
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonValue))
+	req, err := fhirPost("Bundle", jsonValue)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
@@ -226,7 +250,7 @@ func PostMedicaitonBundle(c echo.Context) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
+		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "Not able to post to FHIR", Data: &echo.Map{"data": err.Error()}})
 	}
 	defer resp.Body.Close()
 
@@ -238,18 +262,17 @@ func PostMedicaitonBundle(c echo.Context) error {
 }
 
 func DeleteMedicationBundle(c echo.Context) error {
+
 	var consent models.Consent
 	// defer cancel()
-
 	if err := c.Bind(&consent); err != nil {
 		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
-	url := "http://" + configs.FHIR_URI() + ":8080/fhir/Bundle?identifier=" + consent.ConsentID
+	req, err := fhirDelete("Bundle?identifier=" + consent.ConsentID)
 
-	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
+		fmt.Errorf("error setting up medication-statement request: %v\n", err)
 	}
 
 	client := &http.Client{}
@@ -259,5 +282,6 @@ func DeleteMedicationBundle(c echo.Context) error {
 	}
 	defer resp.Body.Close()
 
-	return c.JSON(http.StatusOK, responses.MedicationRecordResponse{Status: http.StatusOK, Message: "Delted successfully", Data: &echo.Map{"data": ""}})
+	return c.JSON(http.StatusOK, responses.MedicationRecordResponse{Status: http.StatusOK, Message: "Deleted successfully", Data: &echo.Map{"data": consent.ConsentID}})
+
 }

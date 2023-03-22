@@ -308,3 +308,36 @@ func HashPassword(password string) string {
 
 	return string(bytes)
 }
+
+func SeedProviders(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Second)
+	var providers []models.Provider
+	defer cancel()
+
+	//validate the request body
+	if err := c.Bind(&providers); err != nil {
+		return c.JSON(http.StatusBadRequest, responses.ProviderResponse{Status: http.StatusBadRequest, Message: "error1", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	//use the validator library to validate required fields
+	// if validationErr := validate.Struct(&providers); validationErr != nil {
+	// 	return c.JSON(http.StatusBadRequest, responses.ProviderResponse{Status: http.StatusBadRequest, Message: "error2", Data: &echo.Map{"data": validationErr.Error()}})
+	// }
+
+	for _, provider := range providers {
+		newProvider := models.Provider{
+			ID:       primitive.NewObjectID(),
+			Name:     provider.Name,
+			Country:  provider.Country,
+			Password: HashPassword(provider.Password),
+			Username: provider.Username,
+		}
+
+		_, err := providerCollection.InsertOne(ctx, newProvider)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+		}
+	}
+
+	return c.JSON(http.StatusCreated, "Healthcare-providers populated")
+}
