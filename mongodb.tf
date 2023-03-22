@@ -37,15 +37,15 @@ resource "mongodbatlas_advanced_cluster" "dcs-medication-sharing" {
     region_configs {
       electable_specs {
         instance_size = "M0"
-        node_count    = 1
+        node_count    = 0 # 1
       }
-      analytics_specs {
-        instance_size = "M0"
-        node_count    = 1
-      }
+      #analytics_specs {
+      #  instance_size = "M0"
+      #  node_count    = 1
+      #}
       provider_name         = "TENANT"
       backing_provider_name = "GCP"
-      priority              = 1
+      priority              = 7 # 1
       region_name           = "WESTERN_EUROPE"
     }
   }
