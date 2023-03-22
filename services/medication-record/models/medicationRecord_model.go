@@ -1,16 +1,5 @@
 package models
 
-type MedicationRecord struct {
-	ConsentID         string `json:"consentid,omitempty"`                             //Consent ID
-	Name              string `json:"name,omitempty" validate:"required"`              // Patient Name
-	Medication        string `json:"medication,omitempty"  validate:"required"`       // Medication Name
-	Note              string `json:"note,omitempty" validate:"required"`              // Doctors Note
-	Status            string `json:"status,omitempty" validate:"required"`            // Status of patient taking the medication
-	EffectiveDateTime string `json:"effectivedatetime,omitempty" validate:"required"` // Date of when pill was first prescribed
-	DosageSequence    int    `json:"dosagesequence,omitempty" validate:"required"`    // Sequence of how many times patient takes medication
-	DosageNote        string `json:"dosagenote,omitempty" validate:"required"`        // Note specifying dosage
-}
-
 type Consent struct {
 	ConsentID string `json:"consentid"`
 }
@@ -46,4 +35,31 @@ type MedicationStatement struct {
 	EffectiveDateTime         string                    `json:"effectiveDateTime"`
 	Dosage                    [1]Dosage                 `json:"dosage"`
 	Identifier                [1]Identifier             `json:"identifier"`
+}
+
+type Resource struct {
+	MedicationStatement MedicationStatement `json:"resource"`
+}
+
+type Bundle struct {
+	ResourceType string        `json:"resourceType"`
+	ID           string        `json:"id"`
+	Identifier   [1]Identifier `json:"identifier"`
+	Type         string        `json:"type"`
+	Entry        []Resource    `json:"entry"`
+}
+
+type MedicationRecord struct {
+	ConsentID         string `json:"consentid,omitempty"`                             //Consent ID
+	Name              string `json:"name,omitempty" validate:"required"`              // Patient Name
+	Medication        string `json:"medication,omitempty"  validate:"required"`       // Medication Name
+	Note              string `json:"note,omitempty" validate:"required"`              // Doctors Note
+	Status            string `json:"status,omitempty" validate:"required"`            // Status of patient taking the medication
+	EffectiveDateTime string `json:"effectivedatetime,omitempty" validate:"required"` // Date of when pill was first prescribed
+	DosageSequence    int    `json:"dosagesequence,omitempty" validate:"required"`    // Sequence of how many times patient takes medication
+	DosageNote        string `json:"dosagenote,omitempty" validate:"required"`        // Note specifying dosage
+}
+
+type MedicationRecords struct {
+	Records []MedicationRecord `json:"records"`
 }

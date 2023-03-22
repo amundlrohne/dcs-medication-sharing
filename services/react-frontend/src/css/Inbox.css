@@ -1,3 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway:wght@300&family=Roboto&display=swap');
+
 .inbox-container {
-    margin-top: 150px;
+    margin: 0 auto;
+    margin-top: 100px;
+    width: 80%;
+    height: 700px;
+    background: white;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    box-shadow: 0px 0px 25px #010c17;
+}
+
+.directory {
+    width: 30%;
+    height: 700px;
+    background-color: #efefef;
+    border-radius: 25px;
+}
+
+.directory #directory-title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 35px;
+    margin-left: 25px;
+    color: #05386B;
+}
+
+.options {
+    font-family: 'Raleway', sans-serif;
+    font-size: 20px;
+    margin-left: 25px;
+}
+
+.options p {
+    border-left: 1px solid black;
+    text-indent: .5em;
+}
+
+.options p:hover {
+    color: #c2c2c2;
+    cursor: pointer;
+    border-left: 1px solid #c2c2c2;
+}
+
+.options-pages {
+    width: 70%;
+    height: 700px;
+}
+
+.requests-page {
+
+}
+
+.options-pages #title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 35px;
+    margin-left: 25px;
+    color: #05386B;
+}
+
+.consent-list {
+    width: 90%;
+    height: 500px;
+    margin-left: 25px;
+}
+
+.records-list {
+    width: 90%;
+    height: 500px;
+    margin-left: 25px;
+}
+
+.consent-request-elem {
+    width: 90%;
+    height: 50px;
+    background: #efefef;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.consent-request-elem #information {
+    font-size: 18px;
+    font-family: 'Raleway', sans-serif;
+    margin-left: 20px;
+    display: block;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.consent-request-elem #view {
+    width: 20%;
+    height: 40px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 10px;
+    background: #5CDB95;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+
+    transition: .3s;
+}
+
+.consent-request-elem #view:hover {
+	cursor: pointer;
+    box-shadow: 0px 0px 10px #2b6c49;
 }

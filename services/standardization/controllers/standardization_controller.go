@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/amundlrohne/dcs-medication-sharing/services/standardization/responses"
 	"github.com/labstack/echo/v4"
 )
 
@@ -98,4 +99,19 @@ func SearchDrug(c echo.Context) error {
 	jsonResponse, _ = json.Marshal(res)
 	return c.JSONBlob(http.StatusOK, jsonResponse)
 
+}
+
+func DrugExists(c echo.Context) error {
+	searchTerm := c.Param("drugName")
+	result := "invalid"
+
+	fmt.Println("here..")
+
+	for i := 0; i < len(DrugNames); i++ {
+		if DrugNames[i] == searchTerm {
+			result = "valid"
+		}
+	}
+
+	return c.JSON(http.StatusOK, responses.MedicationResponse{Status: http.StatusOK, Message: result, Data: &echo.Map{"data": ""}})
 }

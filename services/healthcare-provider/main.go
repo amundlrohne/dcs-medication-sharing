@@ -10,7 +10,6 @@ import (
 
 func main() {
 	e := echo.New()
-
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"*"},
 		AllowCredentials: true,

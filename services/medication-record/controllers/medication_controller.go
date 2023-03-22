@@ -13,15 +13,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetMedicationRecord(c echo.Context) error {
+func GetMedicationBundle(c echo.Context) error {
 	var consent models.Consent
 	// defer cancel()
-
 	if err := c.Bind(&consent); err != nil {
 		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
-	url := "http://" + configs.FHIR_URI() + ":8080/fhir/MedicationStatement?identifier=" + consent.ConsentID
+	url := "http://" + configs.FHIR_URI() + ":8080/fhir/Bundle?identifier=" + consent.ConsentID
 
 	resp, err := http.Get(url)
 
@@ -40,8 +39,8 @@ func GetMedicationRecord(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.MedicationRecordResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": sb}})
 }
 
-func GetAllMedicationRecords(c echo.Context) error {
-	url := "http://" + configs.FHIR_URI() + ":8080/fhir/MedicationStatement?_pretty=true"
+func GetAllMedicationBundles(c echo.Context) error {
+	url := "http://" + configs.FHIR_URI() + ":8080/fhir/Bundle?_pretty=true"
 
 	resp, err := http.Get(url)
 
@@ -61,34 +60,53 @@ func GetAllMedicationRecords(c echo.Context) error {
 
 }
 
-func PostMedicationRecord(c echo.Context) error {
-	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var medicationRecord models.MedicationRecord
-	// defer cancel()
+func PostMedicaitonBundle(c echo.Context) error {
 
-	if err := c.Bind(&medicationRecord); err != nil {
+	url := "http://" + configs.FHIR_URI() + ":8080/fhir/Bundle?_format=json&_pretty=true"
+
+	var medicationRecords models.MedicationRecords
+
+	if err := c.Bind(&medicationRecords); err != nil {
 		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
-	// Define the FHIR server endpoint
-	url := "http://" + configs.FHIR_URI() + ":8080/fhir/MedicationStatement?_format=json&_pretty=true"
+	var medicationStatements []models.MedicationStatement
+	var resources []models.Resource
 
-	fmt.Println("URL :: " + url)
+	for i := 0; i < len(medicationRecords.Records); i++ {
+		fmt.Println(medicationRecords.Records[i])
+		ms := models.MedicationStatement{
+			ResourceType:              "MedicationStatement",
+			ID:                        medicationRecords.Records[i].ConsentID,
+			Subject:                   models.Subject{Display: medicationRecords.Records[i].Name},
+			Status:                    medicationRecords.Records[i].Status,
+			MedicationCodeableConcept: models.MedicationCodeableConcept{Text: medicationRecords.Records[i].Medication},
+			Note:                      [1]models.Note{{Text: medicationRecords.Records[i].Note}},
+			EffectiveDateTime:         medicationRecords.Records[i].EffectiveDateTime,
+			Dosage:                    [1]models.Dosage{{Sequence: medicationRecords.Records[i].DosageSequence, Text: medicationRecords.Records[i].DosageNote}},
+			Identifier:                [1]models.Identifier{{Value: medicationRecords.Records[i].ConsentID}},
+		}
 
-	mr := &models.MedicationStatement{
-		ResourceType:              "MedicationStatement",
-		ID:                        medicationRecord.ConsentID,
-		Subject:                   models.Subject{Display: medicationRecord.Name},
-		Status:                    medicationRecord.Status,
-		MedicationCodeableConcept: models.MedicationCodeableConcept{Text: medicationRecord.Medication},
-		Note:                      [1]models.Note{{Text: medicationRecord.Note}},
-		EffectiveDateTime:         medicationRecord.EffectiveDateTime,
-		Dosage:                    [1]models.Dosage{{Sequence: medicationRecord.DosageSequence, Text: medicationRecord.DosageNote}},
-		Identifier:                [1]models.Identifier{{Value: medicationRecord.ConsentID}},
+		medicationStatements = append(medicationStatements, ms)
 	}
 
-	// Encode the JSON object as a byte slice
-	jsonValue, _ := json.Marshal(mr)
+	for i := 0; i < len(medicationStatements); i++ {
+		rs := models.Resource{
+			MedicationStatement: medicationStatements[i],
+		}
+
+		resources = append(resources, rs)
+	}
+
+	bundle := &models.Bundle{
+		ResourceType: "Bundle",
+		ID:           medicationRecords.Records[0].ConsentID,
+		Identifier:   [1]models.Identifier{{Value: medicationRecords.Records[0].ConsentID}},
+		Type:         "collection",
+		Entry:        resources,
+	}
+
+	jsonValue, _ := json.Marshal(bundle)
 
 	// Create a new HTTP request with the POST method
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonValue))
@@ -115,12 +133,11 @@ func PostMedicationRecord(c echo.Context) error {
 	fmt.Println("Response Status:", resp.Status)
 	fmt.Println("Response Body:", resp)
 
-	fmt.Println("HEREEEE...")
-	return c.JSON(http.StatusCreated, responses.MedicationRecordResponse{Status: http.StatusCreated, Message: "success", Data: &echo.Map{"data": medicationRecord.ConsentID}})
+	return c.JSON(http.StatusOK, responses.MedicationRecordResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": bundle}})
 
 }
 
-func DeleteMedicationRecord(c echo.Context) error {
+func DeleteMedicationBundle(c echo.Context) error {
 	var consent models.Consent
 	// defer cancel()
 
@@ -128,7 +145,7 @@ func DeleteMedicationRecord(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
-	url := "http://" + configs.FHIR_URI() + ":8080/fhir/MedicationStatement?identifier=" + consent.ConsentID
+	url := "http://" + configs.FHIR_URI() + ":8080/fhir/Bundle?identifier=" + consent.ConsentID
 
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
