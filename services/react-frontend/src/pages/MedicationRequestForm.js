@@ -102,8 +102,6 @@ const MedicationRequestForm = () => {
     }
 
     const clearForm = () => {
-        setConsentID("")
-        setPatientName("")
         setDrugName("")
         setMedicationNote("")
         setEffectiveDateTime("")

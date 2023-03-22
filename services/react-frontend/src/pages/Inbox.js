@@ -33,13 +33,14 @@ const Inbox = () => {
             // Fetch consents used as requests
             // These consents will be used for writing medication records
             let fetchConsentRequests = await getConsentRequests(provider_id)
-            let data = fetchConsentRequests.data.data
+            let dataRequests = fetchConsentRequests.data.data
+            console.log(dataRequests)
 
             let temp = []
-            if (data !== null) {
-                for (var i = 0; i < data.length; i++) {
+            if (dataRequests !== null) {
+                for (var i = 0; i < dataRequests.length; i++) {
                     let consentObj = {
-                        consentid: data[i].ID
+                        consentid: dataRequests[i].ID
                     }
         
                     let bundle = await getBundle(consentObj)
@@ -47,7 +48,7 @@ const Inbox = () => {
         
                     console.log(parsedJSON.total)
         
-                    if (parsedJSON.total !== 0) { temp.push(data[i]) }
+                    if (parsedJSON.total === 0) { temp.push(dataRequests[i]) }
                 }
 
                 setConsentRequests(temp)
@@ -60,20 +61,25 @@ const Inbox = () => {
             let fetchConsentIncoming = await getConsentIncoming(provider_id)
             // setConsentIncoming(fetchConsentIncoming.data.data)
             console.log(fetchConsentIncoming)
+            let dataIncoming = fetchConsentIncoming.data.data
 
-            for (var i = 0; i < fetchConsentIncoming.data.data.length; i++) {
-                let consentObj = {
-                    consentid: fetchConsentIncoming.data.data[i].ID
+            if (dataIncoming !== null) {
+                for (var i = 0; i < dataIncoming.length; i++) {
+                    let consentObj = {
+                        consentid: dataIncoming[i].ID
+                    }
+    
+                    console.log(dataIncoming[i].ID)
+    
+                    let bundle = await getBundle(consentObj)
+                    let parsedJSON = JSON.parse(bundle.data.data)
+    
+                    console.log(parsedJSON)
+    
+                    if (parsedJSON.total !== 0) { consentIncoming.push(dataIncoming[i]) }
                 }
-
-                console.log(fetchConsentIncoming.data.data[i].ID)
-
-                let bundle = await getBundle(consentObj)
-                let parsedJSON = JSON.parse(bundle.data.data)
-
-                console.log(parsedJSON)
-
-                if (parsedJSON.total !== 0) { consentIncoming.push(fetchConsentIncoming.data.data[i]) }
+            } else {
+                setConsentIncoming([])
             }
         }
 
