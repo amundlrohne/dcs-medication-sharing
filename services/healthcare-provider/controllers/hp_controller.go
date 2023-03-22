@@ -46,6 +46,7 @@ func CreateProvider(c echo.Context) error {
 	}
 
 	newProvider := models.Provider{
+		ID:       primitive.NewObjectID(),
 		Name:     provider.Name,
 		Country:  provider.Country,
 		Password: HashPassword(provider.Password),
@@ -75,6 +76,22 @@ func GetProvider(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": provider}})
+}
+
+// Search provider by name and return username
+func GetProviderByName(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	searchName := c.Param("name")
+	var provider models.Provider
+	defer cancel()
+
+	err := providerCollection.FindOne(ctx, bson.M{"name": searchName}).Decode(&provider)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": "Error finding HP based on name"}})
+	}
+
+	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": provider.ID}})
 }
 
 func GetAllProviders(c echo.Context) error {
