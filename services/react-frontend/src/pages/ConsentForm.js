@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 
+import { resolveURL } from "../util/resolveURL";
 
 import '../css/ConsentForm.css'
 
@@ -10,14 +11,23 @@ const ConsentForm = () => {
     const [receiverHP, setReceiverHP] = useState(['RHP1', 'sHP1'])
     const [selectedSenderHP, setSelectedSenderHP] = useState([])
     const [selectedReceiverHP, setSelectedReceiverHP] = useState([])
-    const [validationMsg, setValidationMsg] = useState([])
+    const [errorMsg, setErrorMsg] = useState('')
+    const [errorMsgVisibility, showErrorMsg] = useState(false)
 
-    function handleSubmit(e){
+    const [consentID, setConsentID] = useState("")
+    const [consentCreated, showConsentCreated] = useState(false)
+
+    function handleSubmit(e) {
         let senderHP = e.target.senderHP.value;
         let receiverHP = e.target.receiverHP.value;
         if (senderHP === receiverHP){
             e.preventDefault();
-            setValidationMsg(["Sender and receiver Healthcare Providers must be different"]);
+            setErrorMsg("Sender and receiver healthcare providers must be different");
+            showErrorMsg(true)
+
+            setTimeout(function() {
+                showErrorMsg(false)
+            }, 3000)
             return;
         }
         
@@ -26,12 +36,10 @@ const ConsentForm = () => {
         
     }
 
- 
-
 
     // get the id
     async function getHPByName(name){
-        let fetchUrl = 'http://172.29.73.112:8280/health-provider/name/'+name;
+        let fetchUrl = `${resolveURL("healthcare-provider")}/healthcare-provider/name/`+name;
         const res = await fetch(fetchUrl);
         const d = await res.json();
         return d.data.data;
@@ -39,32 +47,33 @@ const ConsentForm = () => {
 
     async function postConsent(senderPK, receiverPK){
         
-        let postUrl  = 'http://172.29.73.112:8180/consent';
+        let postUrl  = `${resolveURL("consent")}/consent`;
 
-        let d = new Object();
+        let consentObj = {
+            topublickey: receiverPK,
+            frompublickey: senderPK,
+            expdate: dateNowPlusOneMonth(),
+            datecreated: dateNow()
+        }
 
-        d.ToPublicKey = senderPK;
-        d.FromPublicKey = receiverPK;
-        d.ExpDate = dateNowPlusOneMonth();
-        d.DateCreated = dateNow();
+        console.log(consentObj)
 
-        let jsonBody = JSON.stringify(d)
-        console.log(jsonBody);
-        const req = await fetch(postUrl,{
+        let finalized_consent_id = await createConsent(postUrl, consentObj)
+        setConsentID(finalized_consent_id.data.data.InsertedID)
+        showConsentCreated(true)
+        
+    }
+
+    const createConsent = async (postUrl, consentObj) => {
+        let req = await fetch(postUrl, {
             method: 'POST',
             headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Request-Headers": "*",
-                "Access-Control-Request-Method": "*",
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(jsonBody) 
+            body: JSON.stringify(consentObj) 
         })
 
-        console.log(req.status);
-        console.log(req.json())
-        
+        return req.json()
     }
 
     function dateNow(){
@@ -111,7 +120,7 @@ const ConsentForm = () => {
     useEffect(()=>{
         async function fetchHP(){
             //Change url
-            let fetchUrl = 'http://172.29.73.112:8280/health-provider/all' ;
+            let fetchUrl = `${resolveURL("healthcare-provider")}/healthcare-provider/all` ;
             let healthCareProviderNames = [] ;
             let d = [];
     
@@ -156,26 +165,42 @@ const ConsentForm = () => {
 
     <div className='ConsentForm'>
         <form className='consent-form' onSubmit={handleSubmit} action='#'>
-            <label htmlFor="senderHP">Sender Healthcare Provider</label>
-            <select name='senderHP' onChange={(e) => { handleChangeSenderHP(e) }}>
-                {senderHP.map((value, index) => <option key={index} name={value}>{value}</option>)}
-            </select>
+            <p id='title'>Create your consent</p>
+            <label htmlFor="senderHP">
+                <span>Sender Healthcare Provider</span>
+                <select name='senderHP' onChange={(e) => { handleChangeSenderHP(e) }}>
+                    {senderHP.map((value, index) => <option key={index} name={value}>{value}</option>)}
+                </select>
+            </label>
             <br></br>
-            <label htmlFor="receiverHP">Reciever Healthcare Provider</label>
-            <select name='receiverHP' onChange={(e) => { handleChangeReceiverHP(e) }}>
-                {receiverHP.map((value, index) => <option key={index} name={value}>{value}</option>)}
-            </select>
-            <br></br>
-            <label htmlFor="agreeConcent"> I consent to share my medication record between the healthcare providers
-            <input type="checkbox" name="agreeConcent" value="agree" required/>
-            </label><br></br>
+            <label htmlFor="receiverHP">
+                <span>Reciever Healthcare Provider</span>
+                <select name='receiverHP' onChange={(e) => { handleChangeReceiverHP(e) }}>
+                    {receiverHP.map((value, index) => <option key={index} name={value}>{value}</option>)}
+                </select>
+            </label>
+
+            <div className='consent-agreement'>
+                <label htmlFor="agreeConcent"> I consent to share my medication record between the healthcare providers
+                <input type="checkbox" name="agreeConcent" value="agree" required/>
+                </label><br></br>
+            </div>
 
             
-            {/* Validation error message  */}
-            {validationMsg.map((val, idx) => <div key={idx}><h3>{val}</h3></div>)}
+            {errorMsgVisibility && (
+                <p id='error-msg'>{errorMsg}</p>
+            )}
             
-            <input type="submit" value="Create Consent" />
+            <input id='submit-consent' type="submit" value="Create Consent" />
         </form>
+
+        {consentCreated && (
+            <div className='consent-created-div'>
+                <p id='header'>Your consent has been created!</p>
+                <p id='consent'>{consentID}</p>
+            </div>
+        )}
+
     </div>
     
     )

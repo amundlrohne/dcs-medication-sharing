@@ -10,7 +10,6 @@ const Navbar = () => {
 
     useEffect(async() => {
         let pathname = window.location.pathname
-        console.log(pathname)
         if (pathname !== '/login') {
             let cookieData = await getCookie();
             console.log(cookieData);
