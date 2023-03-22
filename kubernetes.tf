@@ -78,6 +78,20 @@ resource "kubernetes_deployment" "consent" {
               memory = "50Mi"
             }
           }
+          /*           liveness_probe {
+            http_get {
+              path = "/isalive"
+              port = 8081
+
+              #http_header {
+              #  name  = "X-Custom-Header"
+              #  value = "Awesome"
+              #}
+            }
+
+            initial_delay_seconds = 3
+            period_seconds        = 3
+          } */
         }
       }
     }
@@ -223,20 +237,6 @@ resource "kubernetes_deployment" "medication-record" {
               cpu    = "250m"
               memory = "50Mi"
             }
-          }
-          liveness_probe {
-            http_get {
-              path = "/isalive"
-              port = 8080
-
-              #http_header {
-              #  name  = "X-Custom-Header"
-              #  value = "Awesome"
-              #}
-            }
-
-            initial_delay_seconds = 3
-            period_seconds        = 3
           }
         }
       }
