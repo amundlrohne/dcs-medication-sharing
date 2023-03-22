@@ -211,6 +211,16 @@ resource "kubernetes_deployment" "medication-record" {
             container_port = 8080
           }
 
+          env {
+            name  = "GCP_SERVICE_ACCOUNT_PRIVATE_KEY"
+            value = base64decode(google_service_account_key.medication-record-service-key.private_key)
+          }
+
+          env {
+            name  = "PRODUCTION"
+            value = true
+          }
+
           resources {
             limits = {
               cpu    = "0.5"

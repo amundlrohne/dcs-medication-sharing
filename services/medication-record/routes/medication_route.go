@@ -8,7 +8,6 @@ import (
 )
 
 func MedicationRoute(e *echo.Echo) {
-
 	//All routes related to medication comes here
 	e.POST("/medication-record", controllers.GetMedicationBundle)
 	e.GET("/medication-record", controllers.GetAllMedicationBundles)
