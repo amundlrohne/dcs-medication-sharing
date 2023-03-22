@@ -1,4 +1,6 @@
 FROM node:16-alpine 
+LABEL org.opencontainers.image.source https://github.com/amundlrohne/dcs-medication-sharing
+
 
 WORKDIR /app
 
