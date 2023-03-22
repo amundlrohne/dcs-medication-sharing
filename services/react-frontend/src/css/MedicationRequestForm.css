@@ -58,14 +58,14 @@
 .medication-request-form textarea {
 	border: none;
 	width: 70%;
-	height: 40px;
+	min-height: 100px;
 	border-radius: 10px;
 	text-indent: 1em;
 	outline: none;
 	font-family: 'Raleway', sans-serif;
 	color: #05386B;
 	background: #efefef;
-	overflow: hidden;
+	overflow-y: scroll;
 	resize: none;
     margin-left: 15px;
     margin-top: 10px;

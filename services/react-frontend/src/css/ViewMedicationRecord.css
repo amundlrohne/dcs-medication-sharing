@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway:wght@300&family=Roboto&display=swap');
+
+.medication-record-container {
+    margin-top: 150px;
+    background-color: white;
+	width: 60%;
+	height: 600px;
+	display: block;
+	margin: 0 auto;
+	margin-top: 100px;
+	font-size: 16px;
+	padding: 30px 30px 15px 30px;
+	border-radius: 25px;
+    box-shadow: 0px 0px 25px #010c17;
+	overflow-y: scroll;
+}
+
+.medication-record-container label > span{
+	display: inline-block;
+	float: left;
+	width: 150px;
+	margin-top: 20px;
+    font-family: 'Raleway', sans-serif;
+}
+
+.medication-record-container input {
+	border: none;
+	width: 70%;
+	height: 40px;
+	border-radius: 10px;
+	text-indent: 1em;
+	outline: none;
+	font-family: 'Raleway', sans-serif;
+	color: #05386B;
+	background: #efefef;
+    margin-left: 15px;
+    margin-top: 10px;
+}
+
+.medication-record-container textarea {
+	border: none;
+	width: 70%;
+	height: 100px;
+	border-radius: 10px;
+	text-indent: 1em;
+	outline: none;
+	font-family: 'Raleway', sans-serif;
+	color: #05386B;
+	background: #efefef;
+	overflow-y: scroll;
+	resize: none;
+    margin-left: 15px;
+    margin-top: 10px;
+}
+
+.primary-information {
+    width: 100%;
+    height: 130px;
+    border-bottom: 1.5px solid #efefef;
+}
+
+.record-elem {
+    margin-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1.5px solid #efefef;
+}

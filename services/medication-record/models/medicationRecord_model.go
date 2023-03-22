@@ -37,11 +37,16 @@ type MedicationStatement struct {
 	Identifier                [1]Identifier             `json:"identifier"`
 }
 
+type Resource struct {
+	MedicationStatement MedicationStatement `json:"resource"`
+}
+
 type Bundle struct {
-	ID         string                `json:"id"`
-	Identifier [1]Identifier         `json:"identifier"`
-	Type       string                `json:"type"`
-	Entry      []MedicationStatement `json:"section"`
+	ResourceType string        `json:"resourceType"`
+	ID           string        `json:"id"`
+	Identifier   [1]Identifier `json:"identifier"`
+	Type         string        `json:"type"`
+	Entry        []Resource    `json:"entry"`
 }
 
 type MedicationRecord struct {
@@ -56,10 +61,5 @@ type MedicationRecord struct {
 }
 
 type MedicationRecords struct {
-	Records []MedicationRecords `json:"records"`
+	Records []MedicationRecord `json:"records"`
 }
-
-// type MedicationBundle struct {
-// 	Entry     []MedicationRecord `json:"entry"`               // Medication Records
-// 	ConsentID string             `json:"consentid,omitempty"` //Consent ID
-// }

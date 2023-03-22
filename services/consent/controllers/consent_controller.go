@@ -11,6 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/net/context"
 )
@@ -34,6 +35,7 @@ func CreateConsent(c echo.Context) error {
 	}
 
 	newConsent := models.Consent{
+		ID:            primitive.NewObjectID(),
 		ToPublicKey:   consent.ToPublicKey,
 		FromPublicKey: consent.FromPublicKey,
 		ExpDate:       consent.ExpDate,
@@ -48,21 +50,58 @@ func CreateConsent(c echo.Context) error {
 	return c.JSON(http.StatusCreated, responses.ConsentResponse{Status: http.StatusCreated, Message: "success", Data: &echo.Map{"data": result}})
 }
 
-func GetConsent(c echo.Context) error {
+func GetConsentRequests(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	fromPublicKey := c.Param("from_public_key")
-	var consent models.Consent
+	var consents []models.Consent
 	defer cancel()
 
 	// objId, _ := primitive.ObjectIDFromHex(fromPublicKey)
 
-	err := consentCollection.FindOne(ctx, bson.M{"frompublickey": fromPublicKey}).Decode(&consent)
+	results, err := consentCollection.Find(ctx, bson.M{"frompublickey": fromPublicKey})
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
-	return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": consent}})
+	defer results.Close(ctx)
+	for results.Next(ctx) {
+		var singleConsent models.Consent
+		if err = results.Decode(&singleConsent); err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+		}
+
+		consents = append(consents, singleConsent)
+	}
+
+	return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": consents}})
+}
+
+func GetConsentIncoming(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	toPublicKey := c.Param("to_public_key")
+	var consents []models.Consent
+	defer cancel()
+
+	// objId, _ := primitive.ObjectIDFromHex(fromPublicKey)
+
+	results, err := consentCollection.Find(ctx, bson.M{"topublickey": toPublicKey})
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	defer results.Close(ctx)
+	for results.Next(ctx) {
+		var singleConsent models.Consent
+		if err = results.Decode(&singleConsent); err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.ConsentResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+		}
+
+		consents = append(consents, singleConsent)
+	}
+
+	return c.JSON(http.StatusOK, responses.ConsentResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": consents}})
 }
 
 func GetAllConsents(c echo.Context) error {

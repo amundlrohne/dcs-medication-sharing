@@ -63,7 +63,7 @@ func CreateProvider(c echo.Context) error {
 
 func GetProvider(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	providerID := c.Param("provider_id")
+	providerID := c.Param("id")
 	var provider models.Provider
 	defer cancel()
 
@@ -106,6 +106,27 @@ func DeleteProvider(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": resp}})
+}
+
+func GetProviderFromToken(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	token := c.Param("token")
+	var provider models.Provider
+	var jwtModel models.JWT
+	defer cancel()
+
+	mongo_err := jwtCollection.FindOne(ctx, bson.M{"token": token}).Decode(&jwtModel)
+	if mongo_err != nil {
+		return c.JSON(http.StatusUnauthorized, responses.ProviderResponse{Status: http.StatusUnauthorized, Message: "unauthorized", Data: &echo.Map{"data": mongo_err.Error()}})
+	}
+
+	err := providerCollection.FindOne(ctx, bson.M{"username": jwtModel.Username}).Decode(&provider)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": provider}})
 }
 
 func GetAllProviders(c echo.Context) error {

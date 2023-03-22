@@ -106,7 +106,8 @@ class Login extends React.Component {
                     console.log("Logged in!");
 
                     let cookieData = await getCookie();
-                    console.log(cookieData);
+                    window.location.href = '/inbox'
+
                 }
             } catch {}
         } else {
@@ -130,7 +131,7 @@ const postData = async (url, data) => {
 };
 
 const getCookie = async () => {
-    let url = `${resolveURL("healthcare-provider")}/health-provider/current`;
+    let url = `${resolveURL("healthcare-provider")}/healthcare-provider/current`;
     const response = await fetch(url, {
         method: "GET",
         mode: "cors",
@@ -141,7 +142,7 @@ const getCookie = async () => {
 };
 
 const deleteCookie = async () => {
-    let url = `${resolveURL("healthcare-provider")}/health-provider`;
+    let url = `${resolveURL("healthcare-provider")}/healthcare-provider`;
     const response = await fetch(url, {
         method: "DELETE",
         mode: "cors",

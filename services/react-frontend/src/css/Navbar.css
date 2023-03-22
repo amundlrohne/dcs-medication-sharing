@@ -6,7 +6,7 @@
     background-color: #05386B;
     position: fixed;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     top: 0;
 }
@@ -17,4 +17,24 @@
     font-weight: bold;
     font-size: 30px;
     margin-left: 20px;
+}
+
+.logout-button {
+    width: 10%;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    color: #05386B;
+    background-color: #5CDB95;
+    font-family: 'Raleway', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 30px;
+
+    transition: .2s;
+}
+
+.logout-button:hover {
+    box-shadow: 0px 0px 10px #5CDB95;
+    cursor: pointer;
 }

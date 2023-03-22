@@ -9,7 +9,8 @@ import (
 
 func ConsentRoute(e *echo.Echo) {
 	e.POST("/consent", controllers.CreateConsent)
-	e.GET("/consent/:from_public_key", controllers.GetConsent)
+	e.GET("/consent/from/:from_public_key", controllers.GetConsentRequests)
+	e.GET("/consent/to/:to_public_key", controllers.GetConsentIncoming)
 	e.GET("/consent", controllers.GetAllConsents)
 	e.GET("/", IsAlive)
 }
