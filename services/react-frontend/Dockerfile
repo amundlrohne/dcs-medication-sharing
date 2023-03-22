@@ -5,12 +5,11 @@ WORKDIR /app
 COPY package*.json ./
  
 RUN npm install
+RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
 
-RUN npm install --save-dev nodemon
- 
+
 COPY . .
  
 EXPOSE 3000
- 
-CMD ["nodemon", "./index.js", "localhost", "3000"]
-#CMD [ "npm", "start" ]
+
+CMD npm start
