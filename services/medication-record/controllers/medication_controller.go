@@ -61,6 +61,51 @@ func GetAllMedicationRecords(c echo.Context) error {
 
 }
 
+func PostMedicaitonBundle(c echo.Context) error {
+	// var medicationBundle models.MedicationBundle
+
+	// if err := c.Bind(&medicationBundle); err != nil {
+	// 	return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	// }
+
+	// url := "http://" + configs.FHIR_URI() + ":8080/fhir/MedicationStatement?_format=json&_pretty=true"
+
+	// bundle := &models.Bundle{
+	// 	ID: medicationBundle.ConsentID,
+	// 	Identifier: [1]models.Identifier{{Value: medicationBundle.ConsentID}},
+	// 	Type: "history",
+	// 	Entry: medicationBundle.MedicationRecords
+	// }
+
+	var medicationRecords models.MedicationRecords
+
+	if err := c.Bind(&medicationRecords); err != nil {
+		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
+	}
+
+	// var medicationStatements []models.MedicationStatement
+
+	for i := 0; i < len(medicationRecords.Records); i++ {
+		fmt.Println(medicationRecords.Records[i])
+		// ms := &models.MedicationStatement{
+		// 	ResourceType:              "MedicationStatement",
+		// 	ID:                        medicationRecord.ConsentID,
+		// 	Subject:                   models.Subject{Display: medicationRecord.Name},
+		// 	Status:                    medicationRecord.Status,
+		// 	MedicationCodeableConcept: models.MedicationCodeableConcept{Text: medicationRecord.Medication},
+		// 	Note:                      [1]models.Note{{Text: medicationRecord.Note}},
+		// 	EffectiveDateTime:         medicationRecord.EffectiveDateTime,
+		// 	Dosage:                    [1]models.Dosage{{Sequence: medicationRecord.DosageSequence, Text: medicationRecord.DosageNote}},
+		// 	Identifier:                [1]models.Identifier{{Value: medicationRecord.ConsentID}},
+		// }
+
+		// medicationStatements = append(medicationStatements, ms)
+	}
+
+	return c.JSON(http.StatusOK, responses.MedicationRecordResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": "hey"}})
+
+}
+
 func PostMedicationRecord(c echo.Context) error {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var medicationRecord models.MedicationRecord

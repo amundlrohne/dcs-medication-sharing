@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway:wght@300&family=Roboto&display=swap');
+
+.medication-request-form {
+    margin-top: 150px;
+    background-color: white;
+	width: 60%;
+	height: 600px;
+	display: block;
+	margin: 0 auto;
+	margin-top: 100px;
+	font-size: 16px;
+	padding: 30px 30px 15px 30px;
+	border-radius: 25px;
+    box-shadow: 0px 0px 25px #010c17;
+	overflow-y: scroll;
+}
+
+#form-error {
+    color: #e50914;
+    text-align: center;
+}
+
+.medication-request-form #title {
+    text-align: center;
+    font-size: 18px;
+    font-family: 'Raleway', sans-serif;
+    margin-top: 5px;
+    color: #05386B;
+}
+
+.medication-request-form label > span{
+	display: inline-block;
+	float: left;
+	width: 150px;
+	margin-top: 20px;
+    font-family: 'Raleway', sans-serif;
+}
+
+.medication-request-form input {
+	border: none;
+	width: 70%;
+	height: 40px;
+	border-radius: 10px;
+	text-indent: 1em;
+	outline: none;
+	font-family: 'Raleway', sans-serif;
+	color: #05386B;
+	background: #efefef;
+    margin-left: 15px;
+    margin-top: 10px;
+}
+
+.medication-request-form input:focus {
+    border: 1.5px solid #5CDB95;
+    outline-style: none;
+}
+
+.medication-request-form textarea {
+	border: none;
+	width: 70%;
+	height: 40px;
+	border-radius: 10px;
+	text-indent: 1em;
+	outline: none;
+	font-family: 'Raleway', sans-serif;
+	color: #05386B;
+	background: #efefef;
+	overflow: hidden;
+	resize: none;
+    margin-left: 15px;
+    margin-top: 10px;
+}
+
+.medication-request-form textarea:focus {
+    border: 1.5px solid #5CDB95;
+    outline-style: none;
+}
+
+#medicationStatus {
+	width: 20%;
+	height: 40px;
+	border-radius: 10px;
+	text-indent: 1em;
+	background: #efefef;
+	margin-left: 15px;
+    margin-top: 10px;
+}
+
+.medication-request-form #add-medication {
+    width: 60%;
+    height: 50px;
+    border: none;
+    border-radius: 25px;
+    background-color: #5CDB95;
+    color: #05386B;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+	display: block;
+	margin: 0 auto;
+	margin-top: 50px;
+
+    transition: .4s;
+}
+
+.medication-request-form #add-medication:hover {
+	cursor: pointer;
+    box-shadow: 0px 0px 20px #2b6c49;
+}
+
+#drug-list-empty {
+    font-size: 16px;
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+}
+
+.drug-list {
+	width: 70%;
+	max-height: 105px;
+	overflow-y: scroll;
+	background: #efefef;
+	border-radius: 10px;
+    margin-top: 5px;
+	margin-bottom: 20px;
+    margin-left: 165px;
+}
+
+.drug-list li {
+	list-style-type: none;
+	height: 30px;
+	width: 100%;
+	text-indent: 1em;
+	line-height: 30px;
+}
+
+.drug-list li:hover {
+	cursor: pointer;
+	background-color: #c2c2c2;
+}
+
+.added-medications {
+    width: 60%;
+    min-height: 200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 25px;
+    margin-top: 50px;
+    padding: 30px 30px 15px 30px;
+    box-shadow: 0px 0px 25px #010c17;
+    margin-bottom: 50px;
+}
+
+.added-medications #title {
+    text-align: center;
+    font-size: 22px;
+    font-family: 'Raleway', sans-serif;
+    margin-top: 5px;
+    color: #05386B;
+}
+
+.medication-elem {
+    width: 90%;
+    height: 50px;
+    background: #efefef;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.medication-elem #information {
+    font-size: 18px;
+    font-family: 'Raleway', sans-serif;
+    margin-left: 20px;
+}
+
+.medication-elem #delete {
+    width: 20%;
+    height: 40px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 10px;
+    background: #db6861;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+
+    transition: .3s;
+}
+
+.medication-elem #delete:hover {
+    box-shadow: 0px 0px 10px #90433f;
+    cursor: pointer;
+}
+
+#submit-medical-record {
+    width: 40%;
+    height: 50px;
+    border: none;
+    border-radius: 25px;
+    background-color: #5CDB95;
+    color: #05386B;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif;
+	display: block;
+	margin: 0 auto;
+	margin-top: 50px;
+    margin-bottom: 100px;
+
+    transition: .4s;
+}
+
+#submit-medical-record:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 20px #e5eee9;
+}

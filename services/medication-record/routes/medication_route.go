@@ -14,6 +14,7 @@ func MedicationRoute(e *echo.Echo) {
 	e.GET("/medication-record", controllers.GetAllMedicationRecords)
 	e.POST("/medication-record/new", controllers.PostMedicationRecord)
 	e.DELETE("/medication-record", controllers.DeleteMedicationRecord)
+	e.POST("/medication-record/bundle", controllers.PostMedicaitonBundle)
 
 	e.GET("/", IsAlive)
 }
@@ -21,4 +22,5 @@ func MedicationRoute(e *echo.Echo) {
 func IsAlive(c echo.Context) error {
 
 	return c.String(http.StatusOK, "Alive")
+
 }
