@@ -94,6 +94,20 @@ func GetProviderByName(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": provider.ID}})
 }
 
+func DeleteProvider(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	id := c.Param("id")
+	defer cancel()
+
+	resp, err := providerCollection.DeleteOne(ctx, bson.M{"_id": id})
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": "Error finding HP based on name"}})
+	}
+
+	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": resp}})
+}
+
 func GetAllProviders(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var providers []models.Provider
