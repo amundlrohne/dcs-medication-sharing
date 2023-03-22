@@ -77,6 +77,22 @@ func GetProvider(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.ProviderResponse{Status: http.StatusOK, Message: "success", Data: &echo.Map{"data": provider}})
 }
 
+// Search provider by name and return id
+func GetProviderByName(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	name := c.Param("name")
+
+	defer cancel()
+
+	res := providerCollection.FindOne(ctx, bson.M{name: name})
+
+	if res != nil {
+		return c.JSON(http.StatusInternalServerError, responses.ProviderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &echo.Map{"data": "Error finding HP based on name"}})
+	}
+
+	return c.JSON(http.StatusOK, res)
+}
+
 func GetAllProviders(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var providers []models.Provider
