@@ -39,8 +39,11 @@ services:
         entrypoint: CompileDaemon --build="go build -o /medication-record" --command=/medication-record
         ports:
             - 8380:8080
+        depends_on:
+            - "fhir"
         environment:
             FHIR_URL: fhir
+            PRODUCTION: "false"
     standardization:
         image: mshare/standardization
         build: ./services/standardization

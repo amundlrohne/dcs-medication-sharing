@@ -9,6 +9,14 @@ func FHIR_URI() string {
 	return os.Getenv("FHIR_URL")
 }
 
+func EnvProduction() string {
+	return os.Getenv("PRODUCTION")
+}
+
+func EnvGCPServiceKey() string {
+	return os.Getenv("GCP_SERVICE_ACCOUNT_PRIVATE_KEY")
+}
+
 func EnvMongoURI() string {
 	username := os.Getenv("MONGO_USERNAME")
 	password := os.Getenv("MONGO_PASSWORD")

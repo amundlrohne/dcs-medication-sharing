@@ -8,6 +8,7 @@ import (
 )
 
 func ProviderRoute(e *echo.Echo) {
+	e.POST("/healthcare-provider/seed", controllers.SeedProviders)
 	e.POST("/healthcare-provider", controllers.CreateProvider)
 	e.GET("/healthcare-provider/:id", controllers.GetProvider)
 	e.GET("/healthcare-provider/all", controllers.GetAllProviders)
