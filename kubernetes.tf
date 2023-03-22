@@ -13,9 +13,6 @@ provider "kubernetes" {
 
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
-  #client_certificate     = google_container_cluster.primary.master_auth.0.client_certificate
-  #client_key             = google_container_cluster.primary.master_auth.0.client_key
-  #cluster_ca_certificate = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
 }
 
 resource "kubernetes_deployment" "consent" {
@@ -78,20 +75,6 @@ resource "kubernetes_deployment" "consent" {
               memory = "50Mi"
             }
           }
-          /*           liveness_probe {
-            http_get {
-              path = "/isalive"
-              port = 8081
-
-              #http_header {
-              #  name  = "X-Custom-Header"
-              #  value = "Awesome"
-              #}
-            }
-
-            initial_delay_seconds = 3
-            period_seconds        = 3
-          } */
         }
       }
     }
