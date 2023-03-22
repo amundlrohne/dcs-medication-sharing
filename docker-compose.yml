@@ -5,13 +5,12 @@ services:
         build: ./services/consent
         volumes:
             - ./services/consent:/app
-        entrypoint: CompileDaemon --command=/consent
+        entrypoint: CompileDaemon --build="go build -o /consent" --command=/consent
         ports:
             - 8180:8080
         depends_on:
             - "mongo"
         environment:
-            #MONGO_URL: "mongodb+srv://amundlrohne:SndokgJPRbSf1SdR@dcs-medication-sharing.mx7hyyo.mongodb.net/?retryWrites=true&w=majority"
             MONGO_URL: "mongodb://mongo:27017"
             MONGO_USERNAME: root
             MONGO_PASSWORD: example
@@ -21,7 +20,7 @@ services:
         build: ./services/healthcare-provider
         volumes:
             - ./services/healthcare-provider:/app
-        entrypoint: CompileDaemon --command=/healthcare-provider
+        entrypoint: CompileDaemon --build="go build -o /healthcare-provider" --command=/healthcare-provider
         ports:
             - 8280:8080
         depends_on:
@@ -37,7 +36,7 @@ services:
         build: ./services/medication-record
         volumes:
             - ./services/medication-record:/app
-        entrypoint: CompileDaemon --command=/medication-record
+        entrypoint: CompileDaemon --build="go build -o /medication-record" --command=/medication-record
         ports:
             - 8380:8080
         environment:
@@ -47,7 +46,7 @@ services:
         build: ./services/standardization
         volumes:
             - ./services/standardization:/app
-        entrypoint: CompileDaemon --command=/standardization
+        entrypoint: CompileDaemon --build="go build -o /standardization" --command=/standardization
         ports:
             - 8480:8080
     mongo:
@@ -70,6 +69,7 @@ services:
         stdin_open: true
         environment:
             - CHOKIDAR_USEPOLLING=true
+            - REACT_APP_PRODUCTION=false
         command: npm start
     fhir:
         image: "hapiproject/hapi:latest"
