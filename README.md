@@ -17,6 +17,13 @@
 
 [![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
 
+- [FHIR](https://www.hl7.org/fhir/) 
+
+## About 
+
+### An easy to use cloud native platform for sharing medication record across borders using the FHIR standard.
+
+![Project figure](/images/projectFig.jpg)
 
 ### Healthcare Provider Service 
 
@@ -30,6 +37,8 @@
 
 #### Get all items
 
+To be added 
+<!-- 
 ```http
   GET /api/items
 ```
@@ -50,7 +59,7 @@
 
 #### add(num1, num2)
 
-Takes two numbers and returns the sum.
+Takes two numbers and returns the sum. -->
 
 
 
