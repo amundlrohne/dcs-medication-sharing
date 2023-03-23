@@ -92,7 +92,6 @@ func fhirPost(query string, body []byte) (*http.Request, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		req.Header.Set("Content-Type", "application/fhir+json; charset=UTF-8")
 		req.Header.Set("Authorization", "Bearer "+token)
 
@@ -226,7 +225,7 @@ func PostMedicationBundle(c echo.Context) error {
 	bundle := &models.Bundle{
 		ResourceType: "Bundle",
 		ID:           medicationRecords.Records[0].ConsentID,
-		Identifier:   [1]models.Identifier{{Value: medicationRecords.Records[0].ConsentID}},
+		Identifier:   models.Identifier{Value: medicationRecords.Records[0].ConsentID},
 		Type:         "collection",
 		Entry:        resources,
 	}
@@ -236,6 +235,7 @@ func PostMedicationBundle(c echo.Context) error {
 	// Create a new HTTP request with the POST method
 	req, err := fhirPost("Bundle", jsonValue)
 	if err != nil {
+		fmt.Errorf("Error creating request: %v\n", err)
 		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
@@ -250,6 +250,7 @@ func PostMedicationBundle(c echo.Context) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Errorf("Error posting to FHIR: %v\n", err)
 		return c.JSON(http.StatusBadRequest, responses.MedicationRecordResponse{Status: http.StatusBadRequest, Message: "Not able to post to FHIR", Data: &echo.Map{"data": err.Error()}})
 	}
 	defer resp.Body.Close()
