@@ -17,27 +17,55 @@
 
 [![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
 
-- [FHIR](https://www.hl7.org/fhir/) 
+[FHIR](https://www.hl7.org/fhir/) 
 
 ## About 
 
-### An easy to use cloud native platform for sharing medication record across borders using the FHIR standard.
+### An easy to use cloud native platform for consent-based sharing medication records across borders using the FHIR standard.
 
 ![Project figure](/images/projectFig.jpg)
 
-### Healthcare Provider Service 
-
-### Medication Records Service 
-
-### Consent Service 
-
-### Standardization Service 
-
 ## API Reference
 
-#### Get all items
+### Healthcare Provider Service
 
-To be added 
+```http
+POST /healthcare-provider
+GET /healthcare-provider/name/:name
+GET /healthcare-provider/:id
+GET /healthcare-provider/all
+POST /healthcare-provider/verify
+GET /healthcare-provider/current
+GET /healthcare-provider/getID/:token
+DELETE /healthcare-provider/
+``` 
+
+### Medication Records Service 
+```http
+POST /medication-record
+GET /medication-record
+POST /medication-record/new
+DELETE /medication-record
+```
+
+### Consent Service 
+```http 
+POST /consent/
+GET /consent/from/:from_public_key
+GET /consent/to/:to_public_key
+GET /consent/
+
+```
+
+### Standardization Service 
+```http 
+GET /standardization/valid/:drugName
+GET /standardization/drugNames/all
+GET /standardization/:drugName
+```
+
+
+
 <!-- 
 ```http
   GET /api/items
