@@ -42,11 +42,11 @@ type Resource struct {
 }
 
 type Bundle struct {
-	ResourceType string        `json:"resourceType"`
-	ID           string        `json:"id"`
-	Identifier   [1]Identifier `json:"identifier"`
-	Type         string        `json:"type"`
-	Entry        []Resource    `json:"entry"`
+	ResourceType string     `json:"resourceType"`
+	ID           string     `json:"id"`
+	Identifier   Identifier `json:"identifier"`
+	Type         string     `json:"type"`
+	Entry        []Resource `json:"entry"`
 }
 
 type MedicationRecord struct {
