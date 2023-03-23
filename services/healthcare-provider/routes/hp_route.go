@@ -9,14 +9,14 @@ import (
 
 func ProviderRoute(e *echo.Echo) {
 	e.POST("/healthcare-provider/seed", controllers.SeedProviders)
-	e.POST("/healthcare-provider", controllers.CreateProvider)
+	e.POST("/healthcare-provider/", controllers.CreateProvider)
 	e.GET("/healthcare-provider/name/:name", controllers.GetProviderByName)
 	e.GET("/healthcare-provider/:id", controllers.GetProvider)
 	e.GET("/healthcare-provider/all", controllers.GetAllProviders)
 	e.POST("/healthcare-provider/verify", controllers.VerifyUser)
 	e.GET("/healthcare-provider/current", controllers.ReadAuthCookie)
 	e.GET("/healthcare-provider/getID/:token", controllers.GetProviderFromToken)
-	e.DELETE("/healthcare-provider", controllers.DeleteAuthCookie)
+	e.DELETE("/healthcare-provider/", controllers.DeleteAuthCookie)
 
 	e.GET("/", IsAlive)
 }

@@ -9,10 +9,10 @@ import (
 
 func MedicationRoute(e *echo.Echo) {
 	//All routes related to medication comes here
-	e.POST("/medication-record", controllers.GetMedicationBundle)
-	e.GET("/medication-record", controllers.GetAllMedicationBundles)
+	e.POST("/medication-record/", controllers.GetMedicationBundle)
+	e.GET("/medication-record/", controllers.GetAllMedicationBundles)
 	e.POST("/medication-record/new", controllers.PostMedicationBundle)
-	e.DELETE("/medication-record", controllers.DeleteMedicationBundle)
+	e.DELETE("/medication-record/", controllers.DeleteMedicationBundle)
 
 	e.GET("/", IsAlive)
 }
